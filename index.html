@@ -480,13 +480,13 @@ function viewM3(){
       <div class="kpi"><span>تحميل ${mo}</span><b>${f(tout)}</b><small>طبلية · تحميل</small></div>
       <div class="kpi"><span>صافي الشهر</span><b class="${tin>=tout?'ok':'warn'}">${sg(tin-tout)}</b><small>${f(ops)} عملية خلال ${work} يوم عمل</small></div>
     </div>${M.today?dayStrip(inside,M.today,'طبلية داخل الهنجر'):''}</section>
-  <div class="stack"><section class="card"><h2>الحركة اليومية · ${mo}</h2><p class="sub">بالطبلية، الأحدث فوق. الأيام اللي ما فيها حركة مش ظاهرة.</p>
+  <div class="stack"><section class="card"><h2>الحركة اليومية · ${mo}</h2><p class="sub">حركات شهر ${mo} · بالطبلية</p>
       ${(()=>{const WD=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];let run=inside-(tin-tout);const rows=M.daily.map(d=>{run+=d[1]-d[2];return [...d,run]}).filter(d=>d[1]||d[2]||d[3]).reverse();
         return `<div class="scroll"><table class="dtab"><thead><tr><th>اليوم</th><th class="n">تنزيل</th><th class="n">تحميل</th><th class="n">الصافي</th><th class="n">داخل الهنجر</th><th class="n">الإشغال</th><th class="n">عمليات</th></tr></thead><tbody>${rows.map(d=>{const net=d[1]-d[2],pp=d[4]/cap,lv=LV(pp);return `<tr><td><b>${d[0]} ${mo}</b> <small style="color:var(--mut)">${WD[new Date(M.ym[0],M.ym[1]-1,d[0]).getDay()]}</small></td><td class="n" style="color:var(--in)">${d[1]?f(d[1]):'–'}</td><td class="n">${d[2]?f(d[2]):'–'}</td><td class="n ${net>0?'ok':net<0?'warn':''}">${net?f(Math.abs(net))+(net>0?' ▲':' ▼'):'–'}</td><td class="n"><b>${f(d[4])}</b></td><td class="n"><bdi class="${lv}">${p1(pp)}</bdi></td><td class="n">${f(d[3])}</td></tr>`}).join('')}
         <tr class="t"><td>الإجمالي · ${rows.length} يوم</td><td class="n">${f(tin)}</td><td class="n">${f(tout)}</td><td class="n">${f(Math.abs(tin-tout))}${tin>=tout?' ▲':' ▼'}</td><td class="n">${f(inside)}</td><td class="n">${p1(p)}</td><td class="n">${f(ops)}</td></tr></tbody></table></div>
-        <p class="note">▲ دخل أكثر · ▼ طلع أكثر. «داخل الهنجر» بنهاية اليوم بدون طبالي مونه 1، والإشغال من السعة الفعلية ${f(cap)}. متوسط التنزيل ${f(work?tin/work:0)} طبلية لكل يوم عمل.</p>`})()}</section>
+        <p class="note">▲ تنزيل أكثر · ▼ تحميل أكثر. «داخل الهنجر» بنهاية اليوم بدون طبالي مونه 1، والإشغال من السعة الفعلية ${f(cap)}. متوسط التنزيل ${f(work?tin/work:0)} طبلية لكل يوم عمل.</p>`})()}</section>
     <section class="card live"><div class="meta"><span class="dot"></span>${M.today?LH2(M.today[2]):LH(M.last)}</div>
-      ${M.today&&!M.today[2]?`<p class="sub" style="margin-top:10px">حركات الأيام اللي قبل بتلاقيها بجدول الحركة اليومية، أو من 📅 الأرشيف.</p>`:''}
+      ${M.today&&!M.today[2]?`<p class="sub" style="margin-top:10px">للاطلاع على الحركات السابقة الرجوع إلى 📅 الأرشيف</p>`:''}
       <div class="big">${f(ld[1])} <small>تنزيل</small> · ${f(ld[2])} <small>تحميل</small></div><p class="sub">${ld[3]} عملية</p>
       <div class="scroll"><table class="optab"><thead><tr><th>العميل</th><th>الصنف</th><th>العملية</th><th class="n">العدد</th></tr></thead><tbody>${M.lastOps.map(o=>`<tr><td>${esc(o[0])}</td><td>${esc(o[1])}</td><td><span class="tg ${o[2]?'o':'i'}">${o[2]?'تحميل':'تنزيل'}</span></td><td class="n"><b>${f(o[3])}</b></td></tr>`).join('')}
       <tr class="t"><td colspan="3">تنزيل ${f(ld[1])} · تحميل ${f(ld[2])}</td><td class="n">${f(ld[1]+ld[2])}</td></tr></tbody></table></div>
@@ -552,16 +552,16 @@ function viewWH(wh){
       <div class="kpi"><span>غرف قريبة من الامتلاء أو فوق السعة</span><b class="${hi.length?'warn':''}">${hi.length}</b><small>من 80% وفوق</small></div>
       <div class="kpi"><span>المساحة (م²)</span><b>${f(R.reduce((a,r)=>a+r.area,0))}</b><small>الحجم ${f(R.reduce((a,r)=>a+r.vol,0))} م³ · ${CL.length} عملاء</small></div>
     </div></section>
-  <div class="stack"><section class="card"><h2>خريطة الغرف</h2><p class="sub">مخطط المستودع حسب مواقع الغرف الفعلية. اضغط على أي غرفة لتشوف تفاصيلها.</p>
+  <div class="stack"><section class="card"><h2>خريطة الغرف</h2><p class="sub">مخطط المستودع حسب مواقع الغرف الفعلية. بالضغط على الغرفة يتم إظهار المعلومات.</p>
       ${FP[wh]?floorPlan(wh,R):`<div class="rooms">${R.map(r=>`<button type="button" class="rm" data-n="${r.n}" style="flex:${(r.area||100).toFixed(0)} 1 ${((r.area||100)*.75).toFixed(0)}px;background:${STC[r.s][0]};color:${STC[r.s][1]}" aria-label="غرفة ${r.n}"><b>${r.n}</b><small>${r.c?esc(r.c):'فارغة'}</small><small>${r.s?Math.round(r.p*100)+'%':f(r.cap)+' سعة'}</small></button>`).join('')}<span style="flex:100000 1 0"></span></div>`}
       <div class="legend">${ST.map((s,i)=>`<span><i style="background:${STC[i][0]};border:1px solid var(--line)"></i>${s} ${R.filter(r=>r.s===i).length}</span>`).join('')}</div>
       <div class="det" id="det"><small>اختر غرفة لتشوف العميل والكميات والسعة</small></div></section>
     <section class="card live"><div class="meta"><span class="dot"></span>بحاجة انتباه</div>
-      <div class="big">${hi.length} <small>غرف 80% وفوق</small> · ${emp.length} <small>فارغة</small></div><p class="sub">الحالات: منخفض أقل من 50% · مثالي من 50% لـ 80% · قريب من الامتلاء من 80% لـ 100% · فوق السعة فوق 100%. النسبة = المكافئ بطبالي 2.5 ÷ القدرة الاستيعابية بطبالي 2.5.</p><div class="opg">
+      <div class="big">${hi.length} <small>غرف تساوي أو أكبر من 80%</small> · ${emp.length} <small>فارغة</small></div><p class="sub">الحالات: منخفض أقل من 50% · مثالي من 50% لـ 80% · قريب من الامتلاء من 80% لـ 100% · فوق السعة فوق 100%. النسبة = المكافئ بطبالي 2.5 ÷ القدرة الاستيعابية بطبالي 2.5.</p><div class="opg">
       ${hi.sort((a,b)=>b.p-a.p).map(r=>`<div class="op"><div class="ic">!</div><div><b>غرفة ${r.n} · ${esc(r.c)}</b><small>${esc(r.k)} · ${f(r.eq)} من ${f(r.cap)}</small></div><div class="q">${Math.round(r.p*100)}%</div></div>`).join('')}
       ${emp.sort((a,b)=>b.cap-a.cap).map(r=>`<div class="op"><div class="ic">○</div><div><b>غرفة ${r.n} فارغة</b><small>سعة ${f(r.cap)} طبلية · ${f(r.area)} م² · ${f(r.vol)} م³</small></div><div class="q">${f(r.cap)}</div></div>`).join('')}</div></section></div>
   ${mvSection(M,R,wh)}
-  <div class="row"><section class="card"><h2>حسب العميل</h2><p class="sub">مرتبين حسب حجم المخزون</p>
+  <div class="row"><section class="card"><h2>حسب العميل</h2><p class="sub">الترتيب بحسب حجم المخزون</p>
       <div class="scroll"><table><thead><tr><th>العميل</th><th>الغرف</th><th class="n">2.5</th><th class="n">1.9</th><th class="n">مجموع الطبالي</th><th class="n">إشغال غرفه</th></tr></thead><tbody>${CL.map(o=>`<tr><td>${esc(o.c)}<br><small style="color:var(--mut)">${esc([...o.k].join('، '))}</small></td><td>${o.rooms.join('، ')}</td><td class="n">${f(o.a)}</td><td class="n">${f(o.b)}</td><td class="n"><b>${f(o.a+o.b)}</b></td><td class="n">${p1(o.eq/o.cap)}</td></tr>`).join('')}
       <tr class="t"><td>الإجمالي</td><td>${R.length-emp.length} غرفة</td><td class="n">${f(R.reduce((a,r)=>a+r.a,0))}</td><td class="n">${f(R.reduce((a,r)=>a+r.b,0))}</td><td class="n">${f(R.reduce((a,r)=>a+r.a+r.b,0))}</td><td class="n">${p1(eq/cap)}</td></tr></tbody></table></div><p class="note">نسبة الإشغال محسوبة على الطبالي المكافئة (2.5) مقسومة على سعة الغرف.</p></section>
     <section class="card"><h2>حسب الصنف</h2><p class="sub">حصة كل صنف من الطبالي المكافئة</p>
@@ -584,13 +584,13 @@ function mvSection(M,R,wh){
   const close=R.reduce((a,r)=>a+r.a+r.b,0),tIn=L.reduce((a,m)=>a+m[2]+m[3],0),tOut=L.reduce((a,m)=>a+m[4]+m[5],0);
   const strip=`<section class="card">${dayStrip(close,[tIn,tOut],'طبلية (1.9 + 2.5) بمونه '+wh)}</section>`;
   const WD=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],dl=s=>{const d=new Date(s+'T00:00:00');return `<b>${d.getDate()} ${MN[d.getMonth()+1]}</b> <small style="color:var(--mut)">${WD[d.getDay()]}</small>`};
-  if(!L.length)return strip+`<section class="card"><h2>حركات اليوم · مونه ${wh}</h2><p class="sub">ما في حركات مسجلة اليوم (${ds(R0)}) لسا. حركات الأيام اللي قبل بتلاقيها من 📅 تحت على اليمين. ما في حركات مسجلة بعد الرصيد الافتتاحي (نهاية ${ds(prevD(M.open))}).</p></section>`;
+  if(!L.length)return strip+`<section class="card"><h2>حركات مونه ${wh}</h2><p class="sub">لا يوجد حركات مسجلة اليوم (${ds(R0)}). حركات الأيام السابقة عليك الاختيار من 📅 أسفل الصفحة. لا يوجد حركات مسجلة (نهاية ${ds(prevD(M.open))})</p></section>`;
   const days={};L.forEach(m=>{const d=days[m[1]]||(days[m[1]]={i:0,o:0,r:new Set()});d.i+=m[2]+m[3];d.o+=m[4]+m[5];d.r.add(m[0])});
   const DK=Object.keys(days).sort().reverse(),ti=L.reduce((a,m)=>a+m[2]+m[3],0),to=L.reduce((a,m)=>a+m[4]+m[5],0);
   const rows=[];L.forEach(m=>{const r=RN.get(m[0]);if(m[2]+m[3])rows.push([m[1],r,0,m[2],m[3]]);if(m[4]+m[5])rows.push([m[1],r,1,m[4],m[5]])});
   rows.sort((a,b)=>b[0].localeCompare(a[0])||a[1].n-b[1].n);
   const net=x=>`${x?f(Math.abs(x))+(x>0?' ▲':' ▼'):'–'}`;
-  return strip+`<div class="stack"><section class="card"><div class="meta" style="margin-bottom:8px"><span class="dot"></span>${LH2(L.length)}</div><h2>حركات اليوم · مونه ${wh}</h2><p class="sub">من الرصيد الافتتاحي (نهاية ${ds(prevD(M.open))})، الأحدث فوق. العدد بالطبالي (1.9 + 2.5).</p>
+  return strip+`<div class="stack"><section class="card"><div class="meta" style="margin-bottom:8px"><span class="dot"></span>${LH2(L.length)}</div><h2>حركات مونه ${wh}</h2><p class="sub">من الرصيد الافتتاحي (نهاية ${ds(prevD(M.open))}). العدد بالطبالي (1.9 + 2.5).</p>
     <div class="scroll"><table class="dtab"><thead><tr><th>اليوم</th><th class="n">تنزيل</th><th class="n">تحميل</th><th class="n">الصافي</th><th class="n">غرف تحركت</th></tr></thead><tbody>${DK.map(k=>{const d=days[k];return `<tr><td>${dl(k)}</td><td class="n" style="color:var(--in)">${d.i?f(d.i):'–'}</td><td class="n">${d.o?f(d.o):'–'}</td><td class="n ${d.i>d.o?'ok':d.i<d.o?'warn':''}">${net(d.i-d.o)}</td><td class="n">${d.r.size}</td></tr>`}).join('')}
     <tr class="t"><td>الإجمالي · ${DK.length} يوم</td><td class="n">${f(ti)}</td><td class="n">${f(to)}</td><td class="n">${net(ti-to)}</td><td class="n">${new Set(L.map(m=>m[0])).size}</td></tr></tbody></table></div></section>
     <section class="card"><h2>تفاصيل الحركات</h2><p class="sub">كل عملية تنزيل أو تحميل حسب الغرفة</p>
@@ -622,13 +622,13 @@ function viewM10(){
       <div class="kpi"><span>تحميل ${mo}</span><b>${f(tout)}</b><small>طبلية · Out</small></div>
       <div class="kpi"><span>العمليات</span><b>${f(ops)}</b><small>خلال ${work} يوم عمل</small></div>
     </div>${I.today?dayStrip(curStock,I.today,'طبلية'):''}</section>
-  <div class="stack"><section class="card"><h2>الحركة اليومية · ${mo}</h2><p class="sub">بالطبلية (عدد المواقع)، الأحدث فوق. الأيام اللي ما فيها حركة مش ظاهرة.</p>
+  <div class="stack"><section class="card"><h2>الحركة اليومية · ${mo}</h2><p class="sub">حركات شهر ${mo} · بالطبلية (عدد المواقع)</p>
       ${(()=>{const WD=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];let run=curStock-(tin-tout);const rows=I.daily.map(d=>{run+=d[1]-d[2];return [...d,run]}).filter(d=>d[1]||d[2]||d[3]).reverse();
         return `<div class="scroll"><table class="dtab"><thead><tr><th>اليوم</th><th class="n">تنزيل</th><th class="n">تحميل</th><th class="n">الصافي</th><th class="n">الرصيد بنهاية اليوم</th><th class="n">عمليات</th></tr></thead><tbody>${rows.map(d=>{const net=d[1]-d[2];return `<tr><td><b>${d[0]} ${mo}</b> <small style="color:var(--mut)">${WD[new Date(I.ym[0],I.ym[1]-1,d[0]).getDay()]}</small></td><td class="n" style="color:var(--in)">${d[1]?f(d[1]):'–'}</td><td class="n">${d[2]?f(d[2]):'–'}</td><td class="n ${net>0?'ok':net<0?'warn':''}">${net?f(Math.abs(net))+(net>0?' ▲':' ▼'):'–'}</td><td class="n"><b>${f(d[4])}</b></td><td class="n">${f(d[3])}</td></tr>`}).join('')}
         <tr class="t"><td>الإجمالي · ${rows.length} يوم</td><td class="n">${f(tin)}</td><td class="n">${f(tout)}</td><td class="n">${f(Math.abs(tin-tout))}${tin>=tout?' ▲':' ▼'}</td><td class="n">${f(curStock)}</td><td class="n">${f(I.daily.reduce((a,d)=>a+d[3],0))}</td></tr></tbody></table></div>
-        <p class="note">▲ دخل أكثر · ▼ طلع أكثر. متوسط التنزيل ${f(rows.length?tin/rows.length:0)} طبلية لكل يوم عمل.</p>`})()}</section>
+        <p class="note">▲ تنزيل أكثر · ▼ تحميل أكثر. متوسط التنزيل ${f(rows.length?tin/rows.length:0)} طبلية لكل يوم عمل.</p>`})()}</section>
     <section class="card live"><div class="meta"><span class="dot"></span>${I.today?LH2(I.today[2]):LH(I.last)}</div>
-      ${I.today&&!I.today[2]?`<p class="sub" style="margin-top:10px">حركات الأيام اللي قبل بتلاقيها بجدول الحركة اليومية، أو من 📅 الأرشيف.</p>`:''}
+      ${I.today&&!I.today[2]?`<p class="sub" style="margin-top:10px">للاطلاع على الحركات السابقة الرجوع إلى 📅 الأرشيف</p>`:''}
       <div class="big">${f(ld[1])} <small>تنزيل</small> · ${f(ld[2])} <small>تحميل</small></div><p class="sub">${ld[3]} عملية</p>
       <div class="scroll"><table class="optab"><thead><tr><th>التاريخ</th><th>العميل</th><th>العملية</th><th class="n">العدد</th></tr></thead><tbody>${I.lastOps.map(o=>`<tr><td style="white-space:nowrap">${ds(I.last)}</td><td>${esc(o[0])}${o[3]?`<br><small style="color:var(--mut)">${esc(o[3])}</small>`:''}</td><td><span class="tg ${o[1]?'o':'i'}">${o[1]?'تحميل':'تنزيل'}</span></td><td class="n"><b>${f(o[2])}</b></td></tr>`).join('')}</tbody></table></div>
       <div class="op"><div class="ic">≈</div><div><b>${OPN?'منذ الرصيد الافتتاحي':'بعد الجرد'}</b><small>من ${ds(O.date)}: تنزيل ${f(sIn)} · تحميل ${f(sOut)}</small></div><div class="q">${f(Math.abs(sIn-sOut))} ${sIn>=sOut?'▲':'▼'}</div></div></section></div>
@@ -636,7 +636,7 @@ function viewM10(){
       <div class="scroll"><table><thead><tr><th>العميل</th><th>البضاعة</th><th class="n">الرصيد الحالي</th><th class="n">من السعة</th></tr></thead><tbody>${[...O.clients].sort((a,b)=>CUR(b)-CUR(a)).map(c=>{const m=mv[nk(c[0])]||[0,0],e=EST(c);
         return `<tr><td>${esc(c[0])}</td><td><small style="color:var(--mut)">${esc(c[2])}</small></td><td class="n"><b>${f(CUR(c))}</b></td><td class="n">${p1(CUR(c)/O.locs)}</td></tr>`}).join('')}
         <tr class="t"><td>الإجمالي</td><td></td><td class="n">${f(curStock)}</td><td class="n">${p1(pc)}</td></tr></tbody></table></div>
-      <p class="note">▲ دخل أكثر · ▼ طلع أكثر.</p></section>
+      <p class="note">▲ تنزيل أكثر · ▼ تحميل أكثر.</p></section>
     <section class="card"><h2>حركة ${mo} حسب الشركة</h2><p class="sub">من سجل الحركة مباشرة</p>
       <table><thead><tr><th>الشركة</th><th class="n">تنزيل</th><th class="n">تحميل</th><th class="n">الفرق</th></tr></thead><tbody>${I.byCo.map(r=>`<tr><td>${esc(r[0])}</td><td class="n">${f(r[1])}</td><td class="n">${f(r[2])}</td><td class="n ${r[1]>r[2]?'ok':r[1]<r[2]?'warn':''}">${r[1]===r[2]?'—':f(Math.abs(r[1]-r[2]))+(r[1]>r[2]?' ▲':' ▼')}</td></tr>`).join('')}
       <tr class="t"><td>الإجمالي</td><td class="n">${f(tin)}</td><td class="n">${f(tout)}</td><td class="n">${f(Math.abs(tin-tout))}${tin>=tout?' ▲':' ▼'}</td></tr></tbody></table>
@@ -717,13 +717,13 @@ function viewSum(){
   W.filter(w=>age(w.dt)>7).forEach(w=>al.push(['warn','⏱',`بيانات ${w.n} قديمة`,`آخر تاريخ ${ds(w.dt)}، ارفع ملف أحدث`,w.t]));
   const free=okk.map(w=>`${w.n}: ${f(w.cap-w.occ)} ${w.u==='غرفة'?'غرف':w.u==='طبلية'?'طبلية':'موقع'}`).join(' · ');
   let h=`<section class="card"><div class="top"><div class="meta"><span class="dot"></span>كل المستودعات · مباشرة من مجلد Occupancy على SharePoint</div><div class="up"><span class="st" id="st">${esc(SPST||'')}</span><button class="btn" type="button" data-up="auto">رفع ملفات Excel</button></div></div>
-    <h1>${crit.length?crit.map(w=>esc(w.n)).join(' و')+` فوق السعة${warn.length?'، و'+warn.map(w=>esc(w.n)).join(' و')+' قريب من الامتلاء':''}`:warn.length?warn.map(w=>esc(w.n)).join(' و')+' قريب من السعة':'كل المستودعات ضمن السعة'}، و${okk.length} مستودعات فيها مساحة</h1>
+    <h1>${[crit.length?crit.map(w=>esc(w.n)).join(' و')+' أعلى من القدرة الاستيعابية':'',warn.length?warn.map(w=>esc(w.n)).join(' و')+' قريب من القدرة الاستيعابية':''].filter(Boolean).join('، ')||'كل المستودعات ضمن القدرة الاستيعابية'}</h1>
     <p class="sub">${okk.length?'المساحة المتاحة: '+free:''}</p>
     <div class="legend" style="margin:0 0 12px">${['low','ok','warn','bad'].map(k=>`<span><i style="background:${LVC[k]}"></i>${LVN[k]} ${k==='low'?'أقل من 50%':k==='ok'?'50–80%':k==='warn'?'80–100%':'فوق 100%'}</span>`).join('')}</div><div class="whs">${W.map(w=>`<button type="button" class="whc" data-go="${w.t}"><div class="top"><b style="font-size:16px">${esc(w.n)}</b><span class="badge ${w.s}">${LVN[w.s]}</span></div>
       <div class="pc ${w.s==='ok'?'ok':w.s}">${p1(w.p)}</div><div class="bar" style="margin:8px 0"><i style="width:${Math.min(100,w.p*100)}%;background:${LVC[w.s]}"></i><span class="th" style="inset-inline-start:80%"></span></div>
       <small style="color:var(--mut);display:block">${f(w.occ)} من ${f(w.cap)} ${esc(w.u)}</small><small style="color:var(--mut);display:block">${esc(w.extra)}</small><small style="color:var(--mut);display:block">بيانات ${ds(w.dt)}</small></button>`).join('')}</div></section>`;
   const cap3=M3.cap80*M3.share+M3.cap100*(1-M3.share);
-  h+=`<section class="card"><h2>كيف انحسبت النسب</h2><p class="sub">نسبة الإشغال = المشغول ÷ السعة</p>
+  h+=`<section class="card"><h2>آلية احتساب النسب</h2><p class="sub">نسبة الإشغال = المشغول ÷ السعة</p>
     <p class="note" style="margin-bottom:10px">الحالات: <span class="badge low">منخفض</span> أقل من <bdi dir="ltr">50%</bdi> · <span class="badge ok" style="color:var(--ok)">مثالي</span> من <bdi dir="ltr">50%</bdi> لـ <bdi dir="ltr">80%</bdi> · <span class="badge warn" style="color:var(--warn)">قريب من الامتلاء</span> من <bdi dir="ltr">80%</bdi> لـ <bdi dir="ltr">100%</bdi> · <span class="badge bad" style="color:var(--bad)">فوق السعة</span> فوق <bdi dir="ltr">100%</bdi></p>
     <div class="scroll"><table><thead><tr><th>المستودع</th><th>السعة المعتمدة</th><th class="n">الإشغال</th><th>الحالة</th></tr></thead><tbody><tr><td style="white-space:nowrap"><b>مونه 3</b></td><td><small><bdi dir="ltr">${f(M3.cap80)} × ${Math.round(M3.share*100)}% + ${f(M3.cap100)} × ${Math.round((1-M3.share)*100)}% = ${f(cap3)}</bdi> طبلية</small></td>${(w=>w?`<td class="n"><b class="${w.s}">${p1(w.p)}</b></td><td><span class="badge ${w.s}">${LVN[w.s]}</span></td>`:"<td></td><td></td>")(W.find(x=>x.t==="m3"))}</tr><tr><td style="white-space:nowrap"><b>CEVA</b></td><td><small>${f((D.cevasp?D.cevasp.types:[]).reduce((a,r)=>a+r[1],0))} موقع: <bdi dir="ltr">${(D.cevasp?D.cevasp.types:[]).map(r=>r[0]+' '+f(r[1])).join(' + ')}</bdi></small></td>${(w=>w?`<td class="n"><b class="${w.s}">${p1(w.p)}</b></td><td><span class="badge ${w.s}">${LVN[w.s]}</span></td>`:"<td></td><td></td>")(W.find(x=>x.t==="ceva"))}</tr><tr><td style="white-space:nowrap"><b>مونه 10</b></td><td><small>${f((D.m10occ?D.m10occ.locs:0))} موقع بالهنجر حسب الـ WMS</small></td>${(w=>w?`<td class="n"><b class="${w.s}">${p1(w.p)}</b></td><td><span class="badge ${w.s}">${LVN[w.s]}</span></td>`:"<td></td><td></td>")(W.find(x=>x.t==="m10"))}</tr><tr><td style="white-space:nowrap"><b>مونه 4</b></td><td><small>${(D.m14?roomsOf(D.m14,4).length:0)} غرفة (الغرف المشغولة ÷ كل الغرف)</small></td>${(w=>w?`<td class="n"><b class="${w.s}">${p1(w.p)}</b></td><td><span class="badge ${w.s}">${LVN[w.s]}</span></td>`:"<td></td><td></td>")(W.find(x=>x.t==="m4"))}</tr><tr><td style="white-space:nowrap"><b>مونه 1</b></td><td><small>${(D.m14?roomsOf(D.m14,1).length:0)} غرفة (الغرف المشغولة ÷ كل الغرف)</small></td>${(w=>w?`<td class="n"><b class="${w.s}">${p1(w.p)}</b></td><td><span class="badge ${w.s}">${LVN[w.s]}</span></td>`:"<td></td><td></td>")(W.find(x=>x.t==="m1"))}</tr></tbody></table></div>
     <p class="note">الوحدات مختلفة بين المستودعات (غرف، طبلية، موقع)، عشان هيك كل مستودع إله نسبته وما بتنجمع الأرقام مع بعض.</p></section>`;
@@ -831,7 +831,8 @@ async function listFiles(){const s=await (await G(`/sites/${CFG.host}:${CFG.site
   return (r.value||[]).filter(x=>x.file&&/\.xlsx?$/i.test(x.name)&&!/^~\$/.test(x.name)).map(x=>({id:x.id,drive:x.parentReference.driveId,name:x.name,mod:x.lastModifiedDateTime,
     by:(x.lastModifiedBy&&x.lastModifiedBy.user&&x.lastModifiedBy.user.displayName)||'',url:x['@microsoft.graph.downloadUrl']}))}
 const REFD=()=>ARCH||new Date().toLocaleDateString('en-CA');
-const LH2=n=>n?`حركات اليوم · ${ds(REFD())}`:`ما في حركات مسجلة اليوم (${ds(REFD())}) لسا`;
+const dsl=s=>{const d=new Date(s+'T00:00:00Z');return `${d.getUTCDate()}/${MN[d.getUTCMonth()+1]}/${d.getUTCFullYear()}`};
+const LH2=n=>`حركات يوم ${dsl(REFD())}`;
 const LH=last=>{const ref=ARCH||new Date().toLocaleDateString('en-CA');return last===ref?`حركات اليوم · ${ds(ref)}`:`ما في حركات مسجلة اليوم (${ds(ref)}) لسا · هاي حركات آخر يوم: <b>${ds(last)}</b>`};
 const fmtT=s=>{try{return new Date(s).toLocaleString('en-GB',{dateStyle:'short',timeStyle:'short'})}catch(e){return s}};
 const dayOf=s=>new Date(s).toLocaleDateString('en-CA');
@@ -847,7 +848,7 @@ async function loadSet(list){const nd={},ni={},bad=[];
 function card(html){$('view').innerHTML=`<section class="card"><div class="soon">${html}</div></section>`}
 function loginCard(msg){READY=false;card(`<b>Mooneh Occupancy</b>${msg?`<p class="st err" style="margin:10px 0">${esc(msg)}</p>`:''}<p class="sub" style="margin:10px 0 16px">سجّل دخول بحساب الشركة (Microsoft 365) لتشوف أرقام المستودعات</p><button class="btn" type="button" id="loginBtn" style="font-size:16px;padding:10px 22px">تسجيل الدخول بحساب الشركة</button>`);
   $('loginBtn').addEventListener('click',login)}
-async function loadLive(quiet){if(!quiet)card('<b>عم بجيب آخر نسخة من الملفات…</b>');
+async function loadLive(quiet){if(!quiet)card('<b>يرجى الانتظار...</b>');
   FILES=await listFiles();if(!FILES.length)throw new Error('مجلد Occupancy فاضي');
   await Promise.all(FILES.map(async f=>{f.buf=await getBuf(f.url||`/drives/${f.drive}/items/${f.id}/content`,!f.url)}));
   ARCH='';const bad=await loadSet(FILES);applyLens(REFD());VERS=null;SPST=`آخر تحميل ${fmtT(new Date().toISOString())}`+(bad.length?' · مشاكل: '+bad.join('، '):'');
@@ -873,7 +874,7 @@ function setArchUI(){const today=dayOf(new Date().toISOString());$('archLbl').te
   $('arch').hidden=!READY;if(!$('cal').hidden)renderCal();const b=$('archbar');b.hidden=!ARCH;
   if(ARCH)b.innerHTML=`📅 أنت تشوف أرشيف نهاية يوم <b>${ds(ARCH)}</b> (من نسخ الملفات المحفوظة على SharePoint)، الأرقام مش الحالية <button type="button" id="archBack">رجوع للأحدث</button>`}
 async function openArch(k){if(!k){clearInterval(REFT);ARCH='';try{await loadLive()}catch(e){fail(e)}startAuto();return}
-  ARCH=k;clearInterval(REFT);card(`<b>عم بجيب نسخ يوم ${ds(k)}…</b>`);
+  ARCH=k;clearInterval(REFT);card(`<b>يرجى الانتظار... (أرشيف ${ds(k)})</b>`);
   try{const list=[];const miss=[];
     for(const f of FILES){if(f.cov&&f.cov<=k){list.push({name:f.name,mod:f.mod,by:f.by,buf:f.buf});continue}
       const v=(f.vers||[]).filter(v=>dayOf(v.t)<=k).pop();if(!v){miss.push(f.name);continue}
