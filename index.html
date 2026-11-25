@@ -471,7 +471,7 @@ function viewM3(){
         return `<div class="scroll"><table class="dtab"><thead><tr><th>اليوم</th><th class="n">تنزيل</th><th class="n">تحميل</th><th class="n">الصافي</th><th class="n">داخل الهنجر</th><th class="n">الإشغال</th><th class="n">عمليات</th></tr></thead><tbody>${rows.map(d=>{const net=d[1]-d[2],pp=d[4]/cap,lv=LV(pp);return `<tr><td><b>${d[0]} ${mo}</b> <small style="color:var(--mut)">${WD[new Date(M.ym[0],M.ym[1]-1,d[0]).getDay()]}</small></td><td class="n" style="color:var(--in)">${d[1]?f(d[1]):'–'}</td><td class="n">${d[2]?f(d[2]):'–'}</td><td class="n ${net>0?'ok':net<0?'warn':''}">${net?f(Math.abs(net))+(net>0?' ▲':' ▼'):'–'}</td><td class="n"><b>${f(d[4])}</b></td><td class="n"><bdi class="${lv}">${p1(pp)}</bdi></td><td class="n">${f(d[3])}</td></tr>`}).join('')}
         <tr class="t"><td>الإجمالي · ${rows.length} يوم</td><td class="n">${f(tin)}</td><td class="n">${f(tout)}</td><td class="n">${f(Math.abs(tin-tout))}${tin>=tout?' ▲':' ▼'}</td><td class="n">${f(inside)}</td><td class="n">${p1(p)}</td><td class="n">${f(ops)}</td></tr></tbody></table></div>
         <p class="note">▲ دخل أكثر · ▼ طلع أكثر. «داخل الهنجر» بنهاية اليوم بدون طبالي مونه 1، والإشغال من السعة الفعلية ${f(cap)}. متوسط التنزيل ${f(work?tin/work:0)} طبلية لكل يوم عمل.</p>`})()}</section>
-    <section class="card live"><div class="meta"><span class="dot"></span>آخر يوم حركة · ${ds(M.last)}</div>
+    <section class="card live"><div class="meta"><span class="dot"></span>${LH(M.last)}</div>
       <div class="big">${f(ld[1])} <small>تنزيل</small> · ${f(ld[2])} <small>تحميل</small></div><p class="sub">${ld[3]} عملية</p>
       <div class="scroll"><table class="optab"><thead><tr><th>العميل</th><th>الصنف</th><th>العملية</th><th class="n">العدد</th></tr></thead><tbody>${M.lastOps.map(o=>`<tr><td>${esc(o[0])}</td><td>${esc(o[1])}</td><td><span class="tg ${o[2]?'o':'i'}">${o[2]?'تحميل':'تنزيل'}</span></td><td class="n"><b>${f(o[3])}</b></td></tr>`).join('')}
       <tr class="t"><td colspan="3">تنزيل ${f(ld[1])} · تحميل ${f(ld[2])}</td><td class="n">${f(ld[1]+ld[2])}</td></tr></tbody></table></div>
@@ -567,13 +567,13 @@ function mvSection(M,R,wh){
   const RN=new Map(R.map(r=>[r.n,r])),L=(M.mv||[]).filter(m=>RN.has(m[0]));
   if(!M.open)return '';
   const WD=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],dl=s=>{const d=new Date(s+'T00:00:00');return `<b>${d.getDate()} ${MN[d.getMonth()+1]}</b> <small style="color:var(--mut)">${WD[d.getDay()]}</small>`};
-  if(!L.length)return `<section class="card"><h2>الحركات اليومية · مونه ${wh}</h2><p class="sub">ما في حركات مسجلة بعد الرصيد الافتتاحي (نهاية ${ds(prevD(M.open))}).</p></section>`;
+  if(!L.length)return `<section class="card"><h2>الحركات اليومية · مونه ${wh}</h2><p class="sub">ما في حركات مسجلة اليوم. ما في حركات مسجلة بعد الرصيد الافتتاحي (نهاية ${ds(prevD(M.open))}).</p></section>`;
   const days={};L.forEach(m=>{const d=days[m[1]]||(days[m[1]]={i:0,o:0,r:new Set()});d.i+=m[2]+m[3];d.o+=m[4]+m[5];d.r.add(m[0])});
   const DK=Object.keys(days).sort().reverse(),ti=L.reduce((a,m)=>a+m[2]+m[3],0),to=L.reduce((a,m)=>a+m[4]+m[5],0);
   const rows=[];L.forEach(m=>{const r=RN.get(m[0]);if(m[2]+m[3])rows.push([m[1],r,0,m[2],m[3]]);if(m[4]+m[5])rows.push([m[1],r,1,m[4],m[5]])});
   rows.sort((a,b)=>b[0].localeCompare(a[0])||a[1].n-b[1].n);
   const net=x=>`${x?f(Math.abs(x))+(x>0?' ▲':' ▼'):'–'}`;
-  return `<div class="stack"><section class="card"><h2>الحركات اليومية · مونه ${wh}</h2><p class="sub">من الرصيد الافتتاحي (نهاية ${ds(prevD(M.open))})، الأحدث فوق. العدد بالطبالي (1.9 + 2.5).</p>
+  return `<div class="stack"><section class="card"><div class="meta" style="margin-bottom:8px"><span class="dot"></span>${LH(DK[0])}</div><h2>الحركات اليومية · مونه ${wh}</h2><p class="sub">من الرصيد الافتتاحي (نهاية ${ds(prevD(M.open))})، الأحدث فوق. العدد بالطبالي (1.9 + 2.5).</p>
     <div class="scroll"><table class="dtab"><thead><tr><th>اليوم</th><th class="n">تنزيل</th><th class="n">تحميل</th><th class="n">الصافي</th><th class="n">غرف تحركت</th></tr></thead><tbody>${DK.map(k=>{const d=days[k];return `<tr><td>${dl(k)}</td><td class="n" style="color:var(--in)">${d.i?f(d.i):'–'}</td><td class="n">${d.o?f(d.o):'–'}</td><td class="n ${d.i>d.o?'ok':d.i<d.o?'warn':''}">${net(d.i-d.o)}</td><td class="n">${d.r.size}</td></tr>`}).join('')}
     <tr class="t"><td>الإجمالي · ${DK.length} يوم</td><td class="n">${f(ti)}</td><td class="n">${f(to)}</td><td class="n">${net(ti-to)}</td><td class="n">${new Set(L.map(m=>m[0])).size}</td></tr></tbody></table></div></section>
     <section class="card"><h2>تفاصيل الحركات</h2><p class="sub">كل عملية تنزيل أو تحميل حسب الغرفة</p>
@@ -610,7 +610,7 @@ function viewM10(){
         return `<div class="scroll"><table class="dtab"><thead><tr><th>اليوم</th><th class="n">تنزيل</th><th class="n">تحميل</th><th class="n">الصافي</th><th class="n">الرصيد بنهاية اليوم</th><th class="n">عمليات</th></tr></thead><tbody>${rows.map(d=>{const net=d[1]-d[2];return `<tr><td><b>${d[0]} ${mo}</b> <small style="color:var(--mut)">${WD[new Date(I.ym[0],I.ym[1]-1,d[0]).getDay()]}</small></td><td class="n" style="color:var(--in)">${d[1]?f(d[1]):'–'}</td><td class="n">${d[2]?f(d[2]):'–'}</td><td class="n ${net>0?'ok':net<0?'warn':''}">${net?f(Math.abs(net))+(net>0?' ▲':' ▼'):'–'}</td><td class="n"><b>${f(d[4])}</b></td><td class="n">${f(d[3])}</td></tr>`}).join('')}
         <tr class="t"><td>الإجمالي · ${rows.length} يوم</td><td class="n">${f(tin)}</td><td class="n">${f(tout)}</td><td class="n">${f(Math.abs(tin-tout))}${tin>=tout?' ▲':' ▼'}</td><td class="n">${f(curStock)}</td><td class="n">${f(I.daily.reduce((a,d)=>a+d[3],0))}</td></tr></tbody></table></div>
         <p class="note">▲ دخل أكثر · ▼ طلع أكثر. متوسط التنزيل ${f(rows.length?tin/rows.length:0)} طبلية لكل يوم عمل.</p>`})()}</section>
-    <section class="card live"><div class="meta"><span class="dot"></span>آخر يوم حركة · ${ds(I.last)}</div>
+    <section class="card live"><div class="meta"><span class="dot"></span>${LH(I.last)}</div>
       <div class="big">${f(ld[1])} <small>تنزيل</small> · ${f(ld[2])} <small>تحميل</small></div><p class="sub">${ld[3]} عملية</p>
       <div class="scroll"><table class="optab"><thead><tr><th>التاريخ</th><th>العميل</th><th>العملية</th><th class="n">العدد</th></tr></thead><tbody>${I.lastOps.map(o=>`<tr><td style="white-space:nowrap">${ds(I.last)}</td><td>${esc(o[0])}${o[3]?`<br><small style="color:var(--mut)">${esc(o[3])}</small>`:''}</td><td><span class="tg ${o[1]?'o':'i'}">${o[1]?'تحميل':'تنزيل'}</span></td><td class="n"><b>${f(o[2])}</b></td></tr>`).join('')}</tbody></table></div>
       <div class="op"><div class="ic">≈</div><div><b>${OPN?'منذ الرصيد الافتتاحي':'بعد الجرد'}</b><small>من ${ds(O.date)}: تنزيل ${f(sIn)} · تحميل ${f(sOut)}</small></div><div class="q">${f(Math.abs(sIn-sOut))} ${sIn>=sOut?'▲':'▼'}</div></div></section></div>
@@ -789,6 +789,7 @@ async function listFiles(){const s=await (await G(`/sites/${CFG.host}:${CFG.site
   const r=await (await G(`/sites/${s.id}/drive/root:/${encodeURIComponent(CFG.folder)}:/children?$top=200`)).json();
   return (r.value||[]).filter(x=>x.file&&/\.xlsx?$/i.test(x.name)&&!/^~\$/.test(x.name)).map(x=>({id:x.id,drive:x.parentReference.driveId,name:x.name,mod:x.lastModifiedDateTime,
     by:(x.lastModifiedBy&&x.lastModifiedBy.user&&x.lastModifiedBy.user.displayName)||'',url:x['@microsoft.graph.downloadUrl']}))}
+const LH=last=>{const ref=ARCH||new Date().toLocaleDateString('en-CA');return last===ref?`حركات اليوم · ${ds(ref)}`:`ما في حركات مسجلة اليوم (${ds(ref)}) لسا · هاي حركات آخر يوم: <b>${ds(last)}</b>`};
 const fmtT=s=>{try{return new Date(s).toLocaleString('en-GB',{dateStyle:'short',timeStyle:'short'})}catch(e){return s}};
 const dayOf=s=>new Date(s).toLocaleDateString('en-CA');
 async function loadSet(list){const nd={},ni={},bad=[];
