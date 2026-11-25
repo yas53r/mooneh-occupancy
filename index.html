@@ -872,7 +872,7 @@ function renderCal(){const c=$('cal'),today=dayOf(new Date().toISOString()),sel=
     <div class="cf"><button type="button" data-day="${today}">اليوم</button><small>${VERS===null?'عم بجهّز الأيام…':'الأيام الباهتة ما إلها بيانات'}</small></div>`}
 function setArchUI(){const today=dayOf(new Date().toISOString());$('archLbl').textContent=ARCH?ds(ARCH):'اليوم · '+ds(today);
   $('arch').hidden=!READY;if(!$('cal').hidden)renderCal();const b=$('archbar');b.hidden=!ARCH;
-  if(ARCH)b.innerHTML=`📅 أنت تشوف أرشيف نهاية يوم <b>${ds(ARCH)}</b> (من نسخ الملفات المحفوظة على SharePoint)، الأرقام مش الحالية <button type="button" id="archBack">رجوع للأحدث</button>`}
+  if(ARCH)b.innerHTML=`📅 أنت الآن تشاهد نسبة إشغال نهاية يوم <b>${ds(ARCH)}</b>. <button type="button" id="archBack">رجوع للأحدث</button>`}
 async function openArch(k){if(!k){clearInterval(REFT);ARCH='';try{await loadLive()}catch(e){fail(e)}startAuto();return}
   ARCH=k;clearInterval(REFT);card(`<b>يرجى الانتظار... (أرشيف ${ds(k)})</b>`);
   try{const list=[];const miss=[];
