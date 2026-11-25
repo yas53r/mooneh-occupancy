@@ -87,7 +87,7 @@ tr.t td{font-weight:700}
 .archbar{margin:12px 0 0;padding:10px 14px;border-radius:12px;background:rgba(216,173,92,.16);border:1px solid rgba(216,173,92,.5);color:#f3d89c;font-size:14px}.archbar button{margin-inline-start:8px;background:#d8ad5c;color:#2b1d00;border:0;border-radius:999px;padding:4px 12px;font:inherit;font-weight:600;cursor:pointer}
 .fp{display:grid;direction:ltr;gap:4px;min-width:600px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:14px;padding:8px}
 .fp .rm{direction:rtl;min-width:0;min-height:0;padding:5px 6px;border-radius:8px;justify-content:flex-start;gap:1px;text-align:center;align-items:center}
-.fp .rm b{font-size:16px}.fp .rm small{font-size:12.5px;max-width:100%}.stack{display:grid;gap:18px}.optab{margin-top:6px}.optab td,.optab th{padding:8px 6px}.tg{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}.tg.i{background:rgba(0,199,237,.16);color:var(--in)}.tg.o{background:rgba(216,173,92,.18);color:#e7c27d}.dtab td,.dtab th{padding-top:9px;padding-bottom:9px}.dtab tbody tr:nth-child(even):not(.t){background:rgba(255,255,255,.03)}.opg{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));column-gap:24px}.fp{gap:6px!important}.fp .rm{padding:8px 8px!important}.fp .rm .pc2{font-weight:700;font-size:12px;margin-top:auto;white-space:nowrap}
+.fp .rm b{font-size:16px}.fp .rm small{font-size:12.5px;max-width:100%}.stack{display:grid;gap:18px}.daystrip{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:14px;padding:12px 16px;border-radius:12px;background:rgba(0,199,237,.08);border:1px solid rgba(0,199,237,.25);font-size:14px;color:var(--mut)}.daystrip b{color:var(--ink);font-size:15px}.daystrip b.ok{color:var(--ok)}.daystrip b.warn{color:var(--warn)}.optab{margin-top:6px}.optab td,.optab th{padding:8px 6px}.tg{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}.tg.i{background:rgba(0,199,237,.16);color:var(--in)}.tg.o{background:rgba(216,173,92,.18);color:#e7c27d}.dtab td,.dtab th{padding-top:9px;padding-bottom:9px}.dtab tbody tr:nth-child(even):not(.t){background:rgba(255,255,255,.03)}.opg{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));column-gap:24px}.fp{gap:6px!important}.fp .rm{padding:8px 8px!important}.fp .rm .pc2{font-weight:700;font-size:12px;margin-top:auto;white-space:nowrap}
 .corr{background:rgba(255,255,255,.08);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#9fb6c6;font-size:13px}
 .load{background:rgba(255,255,255,.08);border-radius:6px;display:flex;align-items:center;justify-content:center}.load span{writing-mode:vertical-rl;transform:rotate(180deg);font-weight:700;letter-spacing:2px;color:#62788a;font-size:13px}
 .docks{display:flex;flex-direction:column;justify-content:space-around;gap:4px;padding:0 2px}.dock{border:1px solid rgba(255,255,255,.2);background:transparent;border-radius:6px;font-size:11px;text-align:center;padding:4px 2px;color:#62788a}
@@ -284,7 +284,7 @@ function exM3(S){
     const ei=findRow(sh,/عدد الطبال[يى] ف[يى] مون[هة] ?1/);if(ei>=0&&!exM1)exM1=sh[ei].find((v,j)=>j>0&&typeof v==='number')||0}
   if(typeof cap80!=='number'||typeof cap100!=='number')throw new Error('القدرة التخزينية مش موجودة بورقة نسبة الاشغال');
   const by=(fn)=>{const o={};cm.forEach(x=>{const k=fn(x);(o[k]||(o[k]=[0,0,0]))[x[3]]+=x[4];o[k][2]++});return Object.entries(o).map(([k,v])=>[k,...v]).sort((a,b)=>b[1]+b[2]-a[1]-a[2])};
-  return {kind:'m3',open:iso(openS),last:iso(lastS),ym:[Y,Mo],cap80,cap100,share:.75,exM1,
+  return {kind:'m3',open:iso(openS),last:iso(lastS),ym:[Y,Mo],cap80,cap100,share:.75,exM1,ops:ops.filter(o=>o[0]>=openS).map(o=>[iso(o[0]),...o.slice(1)]),
     bal:[...bal.values()].map(b=>[b.c,b.k,b.open,b.in,b.out]),daily,lastOps,
     byVeh:by(x=>x[6]||'غير محدد'),byRep:by(x=>x[5]||'غير محدد'),
     months:Object.entries(months).map(([k,v])=>[+k,...v]).sort((a,b)=>a[0]-b[0]).slice(-6)};
@@ -382,7 +382,7 @@ function exM10new(S){
   return [{kind:'m10occ',date:od?iso(od):'',opening:true,locs,watch:.7,alert:.85,clients},
     {kind:'m10io',last:iso(lastS),ym:[Y,Mo],daily,byCo:Object.entries(co).map(([k,v])=>[k,...v]).sort((a,b)=>b[1]+b[2]-a[1]-a[2]),
      months:Object.entries(mon).map(([k,v])=>[+k,...v]).sort((a,b)=>a[0]-b[0]).slice(-7),lastOps:ops.filter(o=>o[0]===lastS).map(o=>[o[1],o[2],o[3],o[4]]),
-     recent:ops.filter(o=>!od||o[0]>od).map(o=>[iso(o[0]),o[1],o[2],o[3]])}];
+     recent:ops.filter(o=>!od||o[0]>od).map(o=>[iso(o[0]),o[1],o[2],o[3],o[4]])}];
 }
 function exM10(S){const k=Object.keys(S);if(k.some(n=>{const h=(S[n][0]||[]).map(x=>String(x||'').trim());return h.includes('Client')&&h.some(x=>/نوع العملية/.test(x))}))return exM10new(S);throw new Error('هذا ملف بالشكل القديم، ارفع التقرير الجديد')}
 
@@ -456,7 +456,7 @@ function viewM3(){
   $('tagm3').textContent=p1(p);$('tagm3').className='tag'+(p>=1?' bad':'');
   const clients=[...new Set(rows.map(r=>r.c))];
   const byCat=[...new Set(rows.map(r=>r.k))].map(k=>{const rs=rows.filter(r=>r.k===k);return [k,rs.reduce((a,r)=>a+r.in,0),rs.reduce((a,r)=>a+r.out,0)]}).sort((a,b)=>b[1]+b[2]-a[1]-a[2]);
-  let h=`<section class="card"><div class="top"><div class="meta"><span class="dot"></span>آخر حركة ${ds(M.last)} · رصيد افتتاحي ${ds(M.open)}</div>${upHtml('m3')}</div>
+  let h=`<section class="card"><div class="top"><div class="meta"><span class="dot"></span>بيانات يوم ${ds(M.last)} · رصيد افتتاحي الشهر ${ds(M.open)}</div>${upHtml('m3')}</div>
     <h1>${p>=1?`هنجر مونه 3 فوق سعته بـ<em>${f(inside-cap)} طبلية</em>`:`هنجر مونه 3 عند ${p1(p)} من سعته`}</h1>
     <p class="sub">${f(inside)} طبلية داخل الهنجر مقابل سعة فعلية ${f(cap)}</p>
     <div class="kpis">
@@ -465,13 +465,14 @@ function viewM3(){
       <div class="kpi"><span>تنزيل ${mo}</span><b>${f(tin)}</b><small>طبلية · تنزيل</small></div>
       <div class="kpi"><span>تحميل ${mo}</span><b>${f(tout)}</b><small>طبلية · تحميل</small></div>
       <div class="kpi"><span>صافي الشهر</span><b class="${tin>=tout?'ok':'warn'}">${sg(tin-tout)}</b><small>${f(ops)} عملية خلال ${work} يوم عمل</small></div>
-    </div></section>
+    </div>${M.today?dayStrip(inside,M.today,'طبلية داخل الهنجر'):''}</section>
   <div class="stack"><section class="card"><h2>الحركة اليومية · ${mo}</h2><p class="sub">بالطبلية، الأحدث فوق. الأيام اللي ما فيها حركة مش ظاهرة.</p>
       ${(()=>{const WD=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];let run=inside-(tin-tout);const rows=M.daily.map(d=>{run+=d[1]-d[2];return [...d,run]}).filter(d=>d[1]||d[2]||d[3]).reverse();
         return `<div class="scroll"><table class="dtab"><thead><tr><th>اليوم</th><th class="n">تنزيل</th><th class="n">تحميل</th><th class="n">الصافي</th><th class="n">داخل الهنجر</th><th class="n">الإشغال</th><th class="n">عمليات</th></tr></thead><tbody>${rows.map(d=>{const net=d[1]-d[2],pp=d[4]/cap,lv=LV(pp);return `<tr><td><b>${d[0]} ${mo}</b> <small style="color:var(--mut)">${WD[new Date(M.ym[0],M.ym[1]-1,d[0]).getDay()]}</small></td><td class="n" style="color:var(--in)">${d[1]?f(d[1]):'–'}</td><td class="n">${d[2]?f(d[2]):'–'}</td><td class="n ${net>0?'ok':net<0?'warn':''}">${net?f(Math.abs(net))+(net>0?' ▲':' ▼'):'–'}</td><td class="n"><b>${f(d[4])}</b></td><td class="n"><bdi class="${lv}">${p1(pp)}</bdi></td><td class="n">${f(d[3])}</td></tr>`}).join('')}
         <tr class="t"><td>الإجمالي · ${rows.length} يوم</td><td class="n">${f(tin)}</td><td class="n">${f(tout)}</td><td class="n">${f(Math.abs(tin-tout))}${tin>=tout?' ▲':' ▼'}</td><td class="n">${f(inside)}</td><td class="n">${p1(p)}</td><td class="n">${f(ops)}</td></tr></tbody></table></div>
         <p class="note">▲ دخل أكثر · ▼ طلع أكثر. «داخل الهنجر» بنهاية اليوم بدون طبالي مونه 1، والإشغال من السعة الفعلية ${f(cap)}. متوسط التنزيل ${f(work?tin/work:0)} طبلية لكل يوم عمل.</p>`})()}</section>
-    <section class="card live"><div class="meta"><span class="dot"></span>${LH(M.last)}</div>
+    <section class="card live"><div class="meta"><span class="dot"></span>${M.today?LH2(M.today[2]):LH(M.last)}</div>
+      ${M.today&&!M.today[2]?`<p class="sub" style="margin-top:10px">حركات الأيام اللي قبل بتلاقيها بجدول الحركة اليومية، أو من 📅 الأرشيف.</p>`:''}
       <div class="big">${f(ld[1])} <small>تنزيل</small> · ${f(ld[2])} <small>تحميل</small></div><p class="sub">${ld[3]} عملية</p>
       <div class="scroll"><table class="optab"><thead><tr><th>العميل</th><th>الصنف</th><th>العملية</th><th class="n">العدد</th></tr></thead><tbody>${M.lastOps.map(o=>`<tr><td>${esc(o[0])}</td><td>${esc(o[1])}</td><td><span class="tg ${o[2]?'o':'i'}">${o[2]?'تحميل':'تنزيل'}</span></td><td class="n"><b>${f(o[3])}</b></td></tr>`).join('')}
       <tr class="t"><td colspan="3">تنزيل ${f(ld[1])} · تحميل ${f(ld[2])}</td><td class="n">${f(ld[1]+ld[2])}</td></tr></tbody></table></div>
@@ -573,7 +574,7 @@ function mvSection(M,R,wh){
   const rows=[];L.forEach(m=>{const r=RN.get(m[0]);if(m[2]+m[3])rows.push([m[1],r,0,m[2],m[3]]);if(m[4]+m[5])rows.push([m[1],r,1,m[4],m[5]])});
   rows.sort((a,b)=>b[0].localeCompare(a[0])||a[1].n-b[1].n);
   const net=x=>`${x?f(Math.abs(x))+(x>0?' ▲':' ▼'):'–'}`;
-  return `<div class="stack"><section class="card"><div class="meta" style="margin-bottom:8px"><span class="dot"></span>${LH(DK[0])}</div><h2>الحركات اليومية · مونه ${wh}</h2><p class="sub">من الرصيد الافتتاحي (نهاية ${ds(prevD(M.open))})، الأحدث فوق. العدد بالطبالي (1.9 + 2.5).</p>
+  return `<div class="stack"><section class="card"><div class="meta" style="margin-bottom:8px"><span class="dot"></span>${LH2(L.filter(m=>m[1]===REFD()).length)}</div><h2>الحركات اليومية · مونه ${wh}</h2><p class="sub">من الرصيد الافتتاحي (نهاية ${ds(prevD(M.open))})، الأحدث فوق. العدد بالطبالي (1.9 + 2.5).</p>
     <div class="scroll"><table class="dtab"><thead><tr><th>اليوم</th><th class="n">تنزيل</th><th class="n">تحميل</th><th class="n">الصافي</th><th class="n">غرف تحركت</th></tr></thead><tbody>${DK.map(k=>{const d=days[k];return `<tr><td>${dl(k)}</td><td class="n" style="color:var(--in)">${d.i?f(d.i):'–'}</td><td class="n">${d.o?f(d.o):'–'}</td><td class="n ${d.i>d.o?'ok':d.i<d.o?'warn':''}">${net(d.i-d.o)}</td><td class="n">${d.r.size}</td></tr>`}).join('')}
     <tr class="t"><td>الإجمالي · ${DK.length} يوم</td><td class="n">${f(ti)}</td><td class="n">${f(to)}</td><td class="n">${net(ti-to)}</td><td class="n">${new Set(L.map(m=>m[0])).size}</td></tr></tbody></table></div></section>
     <section class="card"><h2>تفاصيل الحركات</h2><p class="sub">كل عملية تنزيل أو تحميل حسب الغرفة</p>
@@ -593,7 +594,7 @@ function viewM10(){
   const lvl=LV;
   const ld=I.daily[I.daily.length-1];
   const used=new Set(O.clients.map(c=>nk(c[0])));const extra=Object.keys(mv).filter(k=>!used.has(k));
-  let h=`<section class="card"><div class="top"><div class="meta"><span class="dot"></span>${OPN?'رصيد افتتاحي':'جرد المخزون'} ${ds(O.date)} · آخر حركة ${ds(I.last)}</div>
+  let h=`<section class="card"><div class="top"><div class="meta"><span class="dot"></span>${OPN?'رصيد افتتاحي':'جرد المخزون'} ${ds(O.date)} · بيانات يوم ${ds(I.last)}</div>
       <div class="up"><span class="st" id="st">${INFO.m10?esc(INFO.m10):'المصدر: Storage Occupancy Mooneh_10 + Copy of Mooneh 10 In_Out'}</span><button class="btn" type="button" data-up="m10">رفع ملفات Excel</button></div></div>
     <h1>مونه 10 عند ${p1(pc)} إشغال، و${tin>=tout?'دخل':'طلع'} ${f(Math.abs(tin-tout))} طبلية زيادة هالشهر</h1>
     <p class="sub">${f(curStock)} طبلية مخزنة من ${f(O.locs)} موقع بالهنجر${OPN?` (رصيد ${ds(O.date)} + حركة الشهر)`:` حسب جرد ${ds(O.date)}`}</p>
@@ -604,13 +605,14 @@ function viewM10(){
       <div class="kpi"><span>تنزيل ${mo}</span><b>${f(tin)}</b><small>طبلية · In</small></div>
       <div class="kpi"><span>تحميل ${mo}</span><b>${f(tout)}</b><small>طبلية · Out</small></div>
       <div class="kpi"><span>العمليات</span><b>${f(ops)}</b><small>خلال ${work} يوم عمل</small></div>
-    </div></section>
+    </div>${I.today?dayStrip(curStock,I.today,'طبلية'):''}</section>
   <div class="stack"><section class="card"><h2>الحركة اليومية · ${mo}</h2><p class="sub">بالطبلية (عدد المواقع)، الأحدث فوق. الأيام اللي ما فيها حركة مش ظاهرة.</p>
       ${(()=>{const WD=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];let run=curStock-(tin-tout);const rows=I.daily.map(d=>{run+=d[1]-d[2];return [...d,run]}).filter(d=>d[1]||d[2]||d[3]).reverse();
         return `<div class="scroll"><table class="dtab"><thead><tr><th>اليوم</th><th class="n">تنزيل</th><th class="n">تحميل</th><th class="n">الصافي</th><th class="n">الرصيد بنهاية اليوم</th><th class="n">عمليات</th></tr></thead><tbody>${rows.map(d=>{const net=d[1]-d[2];return `<tr><td><b>${d[0]} ${mo}</b> <small style="color:var(--mut)">${WD[new Date(I.ym[0],I.ym[1]-1,d[0]).getDay()]}</small></td><td class="n" style="color:var(--in)">${d[1]?f(d[1]):'–'}</td><td class="n">${d[2]?f(d[2]):'–'}</td><td class="n ${net>0?'ok':net<0?'warn':''}">${net?f(Math.abs(net))+(net>0?' ▲':' ▼'):'–'}</td><td class="n"><b>${f(d[4])}</b></td><td class="n">${f(d[3])}</td></tr>`}).join('')}
         <tr class="t"><td>الإجمالي · ${rows.length} يوم</td><td class="n">${f(tin)}</td><td class="n">${f(tout)}</td><td class="n">${f(Math.abs(tin-tout))}${tin>=tout?' ▲':' ▼'}</td><td class="n">${f(curStock)}</td><td class="n">${f(I.daily.reduce((a,d)=>a+d[3],0))}</td></tr></tbody></table></div>
         <p class="note">▲ دخل أكثر · ▼ طلع أكثر. متوسط التنزيل ${f(rows.length?tin/rows.length:0)} طبلية لكل يوم عمل.</p>`})()}</section>
-    <section class="card live"><div class="meta"><span class="dot"></span>${LH(I.last)}</div>
+    <section class="card live"><div class="meta"><span class="dot"></span>${I.today?LH2(I.today[2]):LH(I.last)}</div>
+      ${I.today&&!I.today[2]?`<p class="sub" style="margin-top:10px">حركات الأيام اللي قبل بتلاقيها بجدول الحركة اليومية، أو من 📅 الأرشيف.</p>`:''}
       <div class="big">${f(ld[1])} <small>تنزيل</small> · ${f(ld[2])} <small>تحميل</small></div><p class="sub">${ld[3]} عملية</p>
       <div class="scroll"><table class="optab"><thead><tr><th>التاريخ</th><th>العميل</th><th>العملية</th><th class="n">العدد</th></tr></thead><tbody>${I.lastOps.map(o=>`<tr><td style="white-space:nowrap">${ds(I.last)}</td><td>${esc(o[0])}${o[3]?`<br><small style="color:var(--mut)">${esc(o[3])}</small>`:''}</td><td><span class="tg ${o[1]?'o':'i'}">${o[1]?'تحميل':'تنزيل'}</span></td><td class="n"><b>${f(o[2])}</b></td></tr>`).join('')}</tbody></table></div>
       <div class="op"><div class="ic">≈</div><div><b>${OPN?'منذ الرصيد الافتتاحي':'بعد الجرد'}</b><small>من ${ds(O.date)}: تنزيل ${f(sIn)} · تحميل ${f(sOut)}</small></div><div class="q">${f(Math.abs(sIn-sOut))} ${sIn>=sOut?'▲':'▼'}</div></div></section></div>
@@ -685,7 +687,7 @@ function stats(){
 }
 function viewSum(){
   const W=stats(),occ=W.reduce((a,w)=>a+w.occ,0),cap=W.reduce((a,w)=>a+w.cap,0),crit=W.filter(w=>w.s==='bad'),warn=W.filter(w=>w.s==='warn'),okk=W.filter(w=>w.s==='ok'||w.s==='low');
-  const M3=D.m3,I=D.m10io,mo=MN[M3.ym[1]];
+  const M3=D.m3||{ym:[0,0],cap80:0,cap100:0,share:.75,daily:[]},I=D.m10io||{ym:[0,0],daily:[]},mo=MN[M3.ym[1]]||'';
   const same=I.ym[0]===M3.ym[0]&&I.ym[1]===M3.ym[1];
   const days=Math.max(M3.daily.length,same?I.daily.length:0),rows=[];
   for(let d=1;d<=days;d++){const a=M3.daily[d-1]||[d,0,0,0],b=same?(I.daily[d-1]||[d,0,0,0]):[d,0,0,0];rows.push([a[1]+b[1],a[2]+b[2],a[1],a[2],b[1],b[2]])}
@@ -707,7 +709,7 @@ function viewSum(){
   const cap3=M3.cap80*M3.share+M3.cap100*(1-M3.share);
   h+=`<section class="card"><h2>كيف انحسبت النسب</h2><p class="sub">نسبة الإشغال = المشغول ÷ السعة</p>
     <p class="note" style="margin-bottom:10px">الحالات: <span class="badge low">منخفض</span> أقل من <bdi dir="ltr">50%</bdi> · <span class="badge ok" style="color:var(--ok)">مثالي</span> من <bdi dir="ltr">50%</bdi> لـ <bdi dir="ltr">80%</bdi> · <span class="badge warn" style="color:var(--warn)">قريب من الامتلاء</span> من <bdi dir="ltr">80%</bdi> لـ <bdi dir="ltr">100%</bdi> · <span class="badge bad" style="color:var(--bad)">فوق السعة</span> فوق <bdi dir="ltr">100%</bdi></p>
-    <div class="scroll"><table><thead><tr><th>المستودع</th><th>السعة المعتمدة</th><th class="n">الإشغال</th><th>الحالة</th></tr></thead><tbody><tr><td style="white-space:nowrap"><b>مونه 3</b></td><td><small><bdi dir="ltr">${f(M3.cap80)} × ${Math.round(M3.share*100)}% + ${f(M3.cap100)} × ${Math.round((1-M3.share)*100)}% = ${f(cap3)}</bdi> طبلية</small></td>${(w=>w?`<td class="n"><b class="${w.s}">${p1(w.p)}</b></td><td><span class="badge ${w.s}">${LVN[w.s]}</span></td>`:"<td></td><td></td>")(W.find(x=>x.t==="m3"))}</tr><tr><td style="white-space:nowrap"><b>CEVA</b></td><td><small>${f(D.cevasp.types.reduce((a,r)=>a+r[1],0))} موقع: <bdi dir="ltr">${D.cevasp.types.map(r=>r[0]+' '+f(r[1])).join(' + ')}</bdi></small></td>${(w=>w?`<td class="n"><b class="${w.s}">${p1(w.p)}</b></td><td><span class="badge ${w.s}">${LVN[w.s]}</span></td>`:"<td></td><td></td>")(W.find(x=>x.t==="ceva"))}</tr><tr><td style="white-space:nowrap"><b>مونه 10</b></td><td><small>${f(D.m10occ.locs)} موقع بالهنجر حسب الـ WMS</small></td>${(w=>w?`<td class="n"><b class="${w.s}">${p1(w.p)}</b></td><td><span class="badge ${w.s}">${LVN[w.s]}</span></td>`:"<td></td><td></td>")(W.find(x=>x.t==="m10"))}</tr><tr><td style="white-space:nowrap"><b>مونه 4</b></td><td><small>${roomsOf(D.m14,4).length} غرفة (الغرف المشغولة ÷ كل الغرف)</small></td>${(w=>w?`<td class="n"><b class="${w.s}">${p1(w.p)}</b></td><td><span class="badge ${w.s}">${LVN[w.s]}</span></td>`:"<td></td><td></td>")(W.find(x=>x.t==="m4"))}</tr><tr><td style="white-space:nowrap"><b>مونه 1</b></td><td><small>${roomsOf(D.m14,1).length} غرفة (الغرف المشغولة ÷ كل الغرف)</small></td>${(w=>w?`<td class="n"><b class="${w.s}">${p1(w.p)}</b></td><td><span class="badge ${w.s}">${LVN[w.s]}</span></td>`:"<td></td><td></td>")(W.find(x=>x.t==="m1"))}</tr></tbody></table></div>
+    <div class="scroll"><table><thead><tr><th>المستودع</th><th>السعة المعتمدة</th><th class="n">الإشغال</th><th>الحالة</th></tr></thead><tbody><tr><td style="white-space:nowrap"><b>مونه 3</b></td><td><small><bdi dir="ltr">${f(M3.cap80)} × ${Math.round(M3.share*100)}% + ${f(M3.cap100)} × ${Math.round((1-M3.share)*100)}% = ${f(cap3)}</bdi> طبلية</small></td>${(w=>w?`<td class="n"><b class="${w.s}">${p1(w.p)}</b></td><td><span class="badge ${w.s}">${LVN[w.s]}</span></td>`:"<td></td><td></td>")(W.find(x=>x.t==="m3"))}</tr><tr><td style="white-space:nowrap"><b>CEVA</b></td><td><small>${f((D.cevasp?D.cevasp.types:[]).reduce((a,r)=>a+r[1],0))} موقع: <bdi dir="ltr">${(D.cevasp?D.cevasp.types:[]).map(r=>r[0]+' '+f(r[1])).join(' + ')}</bdi></small></td>${(w=>w?`<td class="n"><b class="${w.s}">${p1(w.p)}</b></td><td><span class="badge ${w.s}">${LVN[w.s]}</span></td>`:"<td></td><td></td>")(W.find(x=>x.t==="ceva"))}</tr><tr><td style="white-space:nowrap"><b>مونه 10</b></td><td><small>${f((D.m10occ?D.m10occ.locs:0))} موقع بالهنجر حسب الـ WMS</small></td>${(w=>w?`<td class="n"><b class="${w.s}">${p1(w.p)}</b></td><td><span class="badge ${w.s}">${LVN[w.s]}</span></td>`:"<td></td><td></td>")(W.find(x=>x.t==="m10"))}</tr><tr><td style="white-space:nowrap"><b>مونه 4</b></td><td><small>${(D.m14?roomsOf(D.m14,4).length:0)} غرفة (الغرف المشغولة ÷ كل الغرف)</small></td>${(w=>w?`<td class="n"><b class="${w.s}">${p1(w.p)}</b></td><td><span class="badge ${w.s}">${LVN[w.s]}</span></td>`:"<td></td><td></td>")(W.find(x=>x.t==="m4"))}</tr><tr><td style="white-space:nowrap"><b>مونه 1</b></td><td><small>${(D.m14?roomsOf(D.m14,1).length:0)} غرفة (الغرف المشغولة ÷ كل الغرف)</small></td>${(w=>w?`<td class="n"><b class="${w.s}">${p1(w.p)}</b></td><td><span class="badge ${w.s}">${LVN[w.s]}</span></td>`:"<td></td><td></td>")(W.find(x=>x.t==="m1"))}</tr></tbody></table></div>
     <p class="note">الوحدات مختلفة بين المستودعات (غرف، طبلية، موقع)، عشان هيك كل مستودع إله نسبته وما بتنجمع الأرقام مع بعض.</p></section>`;
   $('view').innerHTML=h;drawFns=[];ro.disconnect();
   document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.go)));
@@ -716,7 +718,10 @@ function viewSoon(k){
   $('view').innerHTML=`<section class="card"><div class="top"><h2 style="font-size:22px">${NAMES[k]}</h2></div><div class="soon"><b>${k==='sum'?'الملخص بيجمع كل المستودعات':'تبويب '+NAMES[k]+' بالخطوة الجاية'}</b>${k==='sum'?'بيكتمل لما نخلص تبويبات المستودعات':'رح يتغذى من: '+esc(SOURCES[k])}</div></section>`;drawFns=[];ro.disconnect();
 }
 function show(k){tab=k;document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===k));if(!READY)return;
-  try{tagM3();tagM14();tagM10();tagCeva();(k==='sum'?viewSum:k==='m3'?viewM3:k==='m10'?viewM10:k==='ceva'?viewCeva:k==='m1'?()=>viewWH(1):k==='m4'?()=>viewWH(4):()=>viewSoon(k))()}catch(e){$('view').innerHTML=`<section class="card"><p class="st err">خطأ بالعرض: ${esc(e.message)}</p></section>`}
+  [tagM3,tagM14,tagM10,tagCeva].forEach(fn=>{try{fn()}catch(e){}});
+  const NEED={m3:['m3'],m10:['m10occ','m10io'],ceva:['cevasp','cevatx'],m1:['m14'],m4:['m14']}[k]||[];
+  if(NEED.length&&!NEED.some(x=>D[x])){$('view').innerHTML=`<section class="card"><div class="soon"><b>ما في بيانات لـ${NAMES[k]} ${ARCH?'بيوم '+ds(ARCH):''}</b><p class="sub" style="margin-top:8px">${ARCH?'الملف ما كان إله نسخة محفوظة على SharePoint لهاد اليوم.':'تأكد إنه ملفه موجود بمجلد Occupancy.'}</p></div></section>`;try{history.replaceState(null,'','#'+k)}catch(e){}return}
+  try{(k==='sum'?viewSum:k==='m3'?viewM3:k==='m10'?viewM10:k==='ceva'?viewCeva:k==='m1'?()=>viewWH(1):k==='m4'?()=>viewWH(4):()=>viewSoon(k))()}catch(e){$('view').innerHTML=`<section class="card"><p class="st err">خطأ بالعرض: ${esc(e.message)}</p></section>`}
   try{history.replaceState(null,'','#'+k)}catch(e){}}
 document.querySelectorAll('#nav button').forEach(b=>b.addEventListener('click',()=>show(b.dataset.t)));
 
@@ -759,6 +764,26 @@ window.addEventListener('dragleave',()=>{dc=Math.max(0,dc-1);if(!dc)$('drop').cl
 window.addEventListener('dragover',e=>e.preventDefault());
 window.addEventListener('drop',e=>{e.preventDefault();if(document.body.classList.contains('ro')){dc=0;$('drop').classList.remove('on');return}dc=0;$('drop').classList.remove('on');handle(e.dataTransfer.files)});
 
+/* ---------- day lens: everything as of the end of day R; opening of R = closing of the day before ---------- */
+function applyLens(R){
+  const ry=+R.slice(0,4),rm=+R.slice(5,7),rd=+R.slice(8,10),inM=(s,ym)=>+s.slice(0,4)===ym[0]&&+s.slice(5,7)===ym[1];
+  const ext=(daily,ym)=>{if(ry===ym[0]&&rm===ym[1]){daily=daily.filter(d=>d[0]<=rd);for(let d=daily.length?daily[daily.length-1][0]+1:1;d<=rd;d++)daily.push([d,0,0,0])}else if(ry*12+rm<ym[0]*12+ym[1])daily=[];return daily};
+  const M=D.m3;if(M&&M.ops){const P=M.ops.filter(o=>o[0]<=R),T=P.filter(o=>o[0]===R);
+    const bal=new Map(M.bal.map(b=>[b[0]+'|'+b[1],[b[0],b[1],b[2],0,0]]));
+    P.forEach(o=>{const k=o[1]+'|'+o[2];if(!bal.has(k))bal.set(k,[o[1],o[2],0,0,0]);bal.get(k)[3+o[3]]+=o[4]});
+    M.bal=[...bal.values()];M.daily=ext(M.daily,M.ym);M.lastOps=T.map(o=>o.slice(1));M.last=R;
+    M.today=[T.filter(o=>!o[3]).reduce((a,o)=>a+o[4],0),T.filter(o=>o[3]).reduce((a,o)=>a+o[4],0),T.length];
+    const PM=P.filter(o=>inM(o[0],M.ym)),by=fn=>{const m=new Map();PM.forEach(o=>{const k=fn(o),e=m.get(k)||[k,0,0,0];e[1+o[3]]+=o[4];e[3]++;m.set(k,e)});return [...m.values()].sort((a,b)=>b[1]+b[2]-a[1]-a[2])};
+    M.byVeh=by(o=>o[6]||'غير محدد');M.byRep=by(o=>o[5]||'غير محدد')}
+  const O=D.m10occ,I=D.m10io;if(O&&I&&I.recent){const P=I.recent.filter(r=>r[0]<=R),T=P.filter(r=>r[0]===R);
+    I.recent=P;I.daily=ext(I.daily,I.ym);I.lastOps=T.map(r=>[r[1],r[2],r[3],r[4]||'']);I.last=R;
+    I.today=[T.filter(r=>!r[2]).reduce((a,r)=>a+r[3],0),T.filter(r=>r[2]).reduce((a,r)=>a+r[3],0),T.length];
+    const m=new Map();P.filter(r=>inM(r[0],I.ym)).forEach(r=>{const e=m.get(r[1])||[r[1],0,0,0];e[1+r[2]]+=r[3];e[3]++;m.set(r[1],e)});I.byCo=[...m.values()].sort((a,b)=>b[1]+b[2]-a[1]-a[2])}
+  const W=D.m14;if(W&&W.mv){const s={};W.mv.filter(x=>x[1]>R).forEach(x=>{const e=s[x[0]]||(s[x[0]]=[0,0,0,0]);for(let j=0;j<4;j++)e[j]+=x[2+j]});
+    W.rooms.forEach(r=>{const e=s[r[0]];if(!e)return;r[5]=Math.max(0,r[5]-e[0]+e[2]);r[4]=Math.max(0,r[4]-e[1]+e[3])});W.mv=W.mv.filter(x=>x[1]<=R);if(W.open&&W.open<=R)W.date=R}
+}
+const dayStrip=(close,T,unit)=>`<div class="daystrip"><span>📅 <b>${ds(REFD())}</b></span><span>افتتاح اليوم (إغلاق ${ds(prevD(REFD()))}): <b>${f(close-T[0]+T[1])}</b></span><span>تنزيل اليوم: <b class="ok">${f(T[0])}</b></span><span>تحميل اليوم: <b class="warn">${f(T[1])}</b></span><span>الرصيد الآن: <b>${f(close)}</b> ${unit}</span></div>`;
+
 /* ---------- SharePoint source (Microsoft Graph, sign-in with company account) ---------- */
 const CFG={tenant:'7a94117e-b1e9-49dd-8b7d-60c52f1e1923',client:'87d6f10e-baf8-422e-8dd1-15da64df3f83',host:'moonehtrade1.sharepoint.com',site:'/sites/MoonehOperation',folder:'Occupancy',
   scope:'openid profile offline_access User.Read Files.Read.All Sites.Read.All'};
@@ -789,13 +814,17 @@ async function listFiles(){const s=await (await G(`/sites/${CFG.host}:${CFG.site
   const r=await (await G(`/sites/${s.id}/drive/root:/${encodeURIComponent(CFG.folder)}:/children?$top=200`)).json();
   return (r.value||[]).filter(x=>x.file&&/\.xlsx?$/i.test(x.name)&&!/^~\$/.test(x.name)).map(x=>({id:x.id,drive:x.parentReference.driveId,name:x.name,mod:x.lastModifiedDateTime,
     by:(x.lastModifiedBy&&x.lastModifiedBy.user&&x.lastModifiedBy.user.displayName)||'',url:x['@microsoft.graph.downloadUrl']}))}
+const REFD=()=>ARCH||new Date().toLocaleDateString('en-CA');
+const LH2=n=>n?`حركات اليوم · ${ds(REFD())}`:`ما في حركات مسجلة اليوم (${ds(REFD())}) لسا`;
 const LH=last=>{const ref=ARCH||new Date().toLocaleDateString('en-CA');return last===ref?`حركات اليوم · ${ds(ref)}`:`ما في حركات مسجلة اليوم (${ds(ref)}) لسا · هاي حركات آخر يوم: <b>${ds(last)}</b>`};
 const fmtT=s=>{try{return new Date(s).toLocaleString('en-GB',{dateStyle:'short',timeStyle:'short'})}catch(e){return s}};
 const dayOf=s=>new Date(s).toLocaleDateString('en-CA');
+const nextD=s=>{const d=new Date(s+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+1);return d.toISOString().slice(0,10)};
 async function loadSet(list){const nd={},ni={},bad=[];
   for(const f of list){try{const S0=await readAny(f.buf);let m=null,why='';
       for(const k of ['m3','m14','m10','ceva']){try{m=EXTRACT[k](S0);break}catch(x){if(!why&&/القديم|مونه 10:/.test(x.message))why=x.message}}
       if(!m)throw new Error(why||'ما عرفت لأي مستودع');
+      f.cov=null;for(const mm of (Array.isArray(m)?m:[m])){if(mm.kind==='m3')f.cov=nextD(mm.open);if(mm.kind==='m10occ'&&mm.date)f.cov=nextD(mm.date);if(mm.kind==='m14'&&mm.open)f.cov=mm.open}
       for(const mm of (Array.isArray(m)?m:[m])){const sk=mm.kind,ik=sk.startsWith('m10')?'m10':sk.startsWith('ceva')?'ceva':sk;nd[sk]=mm;ni[ik]=`${f.name} · آخر تعديل ${fmtT(f.mod)}${f.by?' · '+f.by:''}`}
     }catch(e){bad.push(f.name+' ('+(e.message||e)+')')}}
   for(const x of Object.keys(D))delete D[x];Object.assign(D,nd);for(const x of Object.keys(INFO))delete INFO[x];Object.assign(INFO,ni);return bad}
@@ -805,12 +834,14 @@ function loginCard(msg){READY=false;card(`<b>Mooneh Occupancy</b>${msg?`<p class
 async function loadLive(quiet){if(!quiet)card('<b>عم بجيب آخر نسخة من الملفات…</b>');
   FILES=await listFiles();if(!FILES.length)throw new Error('مجلد Occupancy فاضي');
   await Promise.all(FILES.map(async f=>{f.buf=await getBuf(f.url||`/drives/${f.drive}/items/${f.id}/content`,!f.url)}));
-  const bad=await loadSet(FILES);ARCH='';VERS=null;SPST=`آخر تحميل ${fmtT(new Date().toISOString())}`+(bad.length?' · مشاكل: '+bad.join('، '):'');
+  ARCH='';const bad=await loadSet(FILES);applyLens(REFD());VERS=null;SPST=`آخر تحميل ${fmtT(new Date().toISOString())}`+(bad.length?' · مشاكل: '+bad.join('، '):'');
   READY=true;setArchUI();show(tab);if(bad.length)setSt(SPST,'err');loadVersions()}
 async function loadVersions(){try{for(const f of FILES){let u=`/drives/${f.drive}/items/${f.id}/versions?$top=500`,all=[];
       for(let i=0;u&&i<6;i++){const j=await (await G(u)).json();all=all.concat(j.value||[]);u=j['@odata.nextLink']||''}
       f.vers=all.map(v=>({id:v.id,t:v.lastModifiedDateTime,by:(v.lastModifiedBy&&v.lastModifiedBy.user&&v.lastModifiedBy.user.displayName)||'',url:v['@microsoft.graph.downloadUrl']})).sort((a,b)=>a.t<b.t?-1:1)}
-    VERS=[...new Set(FILES.flatMap(f=>(f.vers||[]).map(v=>dayOf(v.t))))].sort().reverse();setArchUI()}catch(e){VERS=[];setArchUI()}}
+    const today=dayOf(new Date().toISOString()),ds2=new Set(FILES.flatMap(f=>(f.vers||[]).map(v=>dayOf(v.t))));
+    FILES.forEach(f=>{if(!f.cov)return;for(let d=f.cov,i=0;d<today&&i<400;d=nextD(d),i++)ds2.add(d)});
+    VERS=[...ds2].filter(d=>d<today).sort().reverse();setArchUI()}catch(e){VERS=[];setArchUI()}}
 function setArchUI(){const s=$('archSel'),today=dayOf(new Date().toISOString()),ks=(VERS||[]).filter(k=>k!==today);
   s.innerHTML=`<option value="">الأحدث (الآن)</option>`+ks.map(k=>`<option value="${k}"${k===ARCH?' selected':''}>${ds(k)}</option>`).join('');
   $('arch').hidden=!READY||!ks.length;const b=$('archbar');b.hidden=!ARCH;
@@ -818,9 +849,10 @@ function setArchUI(){const s=$('archSel'),today=dayOf(new Date().toISOString()),
 async function openArch(k){if(!k){clearInterval(REFT);ARCH='';try{await loadLive()}catch(e){fail(e)}startAuto();return}
   ARCH=k;clearInterval(REFT);card(`<b>عم بجيب نسخ يوم ${ds(k)}…</b>`);
   try{const list=[];const miss=[];
-    for(const f of FILES){const v=(f.vers||[]).filter(v=>dayOf(v.t)<=k).pop();if(!v){miss.push(f.name);continue}
+    for(const f of FILES){if(f.cov&&f.cov<=k){list.push({name:f.name,mod:f.mod,by:f.by,buf:f.buf});continue}
+      const v=(f.vers||[]).filter(v=>dayOf(v.t)<=k).pop();if(!v){miss.push(f.name);continue}
       list.push({name:f.name,mod:v.t,by:v.by,buf:await getBuf(v.url||`/drives/${f.drive}/items/${f.id}/versions/${v.id}/content`,!v.url)})}
-    const bad=await loadSet(list);SPST=`أرشيف ${ds(k)}`+(miss.length?' · ما في نسخة لـ: '+miss.join('، '):'')+(bad.length?' · مشاكل: '+bad.join('، '):'');
+    const bad=await loadSet(list);applyLens(k);SPST=`أرشيف ${ds(k)}`+(miss.length?' · ما في نسخة لـ: '+miss.join('، '):'')+(bad.length?' · مشاكل: '+bad.join('، '):'');
     READY=true;setArchUI();show(tab);if(miss.length||bad.length)setSt(SPST,'err')}catch(e){fail(e)}}
 function fail(e){if(e&&e.login)return loginCard();READY=false;card(`<b>ما قدرت أجيب البيانات</b><p class="st err" style="margin:10px 0">${esc(e&&e.message||String(e))}</p><button class="btn" type="button" id="retryBtn">حاول مرة ثانية</button>`);$('retryBtn').addEventListener('click',()=>boot())}
 function startAuto(){clearInterval(REFT);REFT=setInterval(()=>{if(!ARCH&&document.visibilityState==='visible')loadLive(true).catch(()=>{})},5*60*1000)}
