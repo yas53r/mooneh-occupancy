@@ -736,7 +736,7 @@ function viewSoon(k){
 function show(k){tab=k;document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===k));if(!READY)return;
   [tagM3,tagM14,tagM10,tagCeva].forEach(fn=>{try{fn()}catch(e){}});
   const NEED={m3:['m3'],m10:['m10occ','m10io'],ceva:['cevasp','cevatx'],m1:['m14'],m4:['m14']}[k]||[];
-  if(NEED.length&&!NEED.some(x=>D[x])){$('view').innerHTML=`<section class="card"><div class="soon"><b>ما في بيانات لـ${NAMES[k]} ${ARCH?'بيوم '+ds(ARCH):''}</b><p class="sub" style="margin-top:8px">${ARCH?'الملف ما كان إله نسخة محفوظة على SharePoint لهاد اليوم.':'تأكد إنه ملفه موجود بمجلد Occupancy.'}</p></div></section>`;try{history.replaceState(null,'','#'+k)}catch(e){}return}
+  if(NEED.length&&!NEED.some(x=>D[x])){$('view').innerHTML=`<section class="card"><div class="soon"><b>لا يتوفر بيانات لـ${NAMES[k]} ${ARCH?'بيوم '+ds(ARCH):''}</b>${ARCH?'':'<p class="sub" style="margin-top:8px">تأكد إنه ملفه موجود بمجلد Occupancy.</p>'}</div></section>`;try{history.replaceState(null,'','#'+k)}catch(e){}return}
   try{(k==='sum'?viewSum:k==='m3'?viewM3:k==='m10'?viewM10:k==='ceva'?viewCeva:k==='m1'?()=>viewWH(1):k==='m4'?()=>viewWH(4):()=>viewSoon(k))()}catch(e){$('view').innerHTML=`<section class="card"><p class="st err">خطأ بالعرض: ${esc(e.message)}</p></section>`}
   try{history.replaceState(null,'','#'+k)}catch(e){}}
 document.querySelectorAll('#nav button').forEach(b=>b.addEventListener('click',()=>show(b.dataset.t)));
