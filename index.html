@@ -87,7 +87,7 @@ tr.t td{font-weight:700}
 #archBtn{background:none;border:0;color:#fff;font:inherit;font-size:14px;cursor:pointer;padding:2px 8px}
 .arch{padding:6px 8px!important}
 .arch .tool{background:#184572;border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:5px 12px;font:inherit;font-size:13px;cursor:pointer}.arch .tool:hover{background:#1e5a8f}.arch .tool[hidden]{display:none}
-.prhead{display:none}
+.prhead{display:none}.prlogo{display:block;width:210px;height:59px;background:#12385d;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;flex:none}
 .mgmt{position:fixed;inset:0;z-index:60;background:rgba(5,20,35,.6);display:grid;place-items:center;padding:16px}.mgmt[hidden]{display:none}
 .mgbox{width:min(440px,100%);background:#0f2f4f;border:1px solid rgba(0,199,237,.35);border-radius:16px;padding:20px;box-shadow:0 20px 50px rgba(0,0,0,.5);color:#fff}
 .mgbox h2{margin:0 0 6px}.mgbox .sub{margin:0 0 14px}
@@ -115,7 +115,7 @@ tr.t td{font-weight:700}
   .stack,.row{display:block!important}.stack>section,.row>section{margin-bottom:8px}
   .kpi{background:#f3f7fa!important;border:1px solid #dbe5ec!important}
   .scroll{overflow:visible!important}table{width:100%}
-  .prhead{display:flex!important;justify-content:space-between;align-items:center;border-bottom:2px solid #12385d;margin-bottom:10px;padding-bottom:6px;color:#12385d}
+  .prhead{display:flex!important;gap:16px;justify-content:space-between;align-items:center;border-bottom:2px solid #12385d;margin-bottom:10px;padding-bottom:6px;color:#12385d}
   .prhead b{font-size:18px}.prhead span{font-size:12px;color:#4a6072}
   .daystrip{background:#eef8fb!important;border-color:#bfe6f0!important}
   .archbar{background:#fff7e6!important;color:#6b4e00!important}
@@ -930,7 +930,8 @@ function repM14(ws){const M=D.m14,day=REFD(),RW=ws.map(w=>roomsOf(M,w)),ALL=RW.f
   return {name:`Mooneh ${ws.join('+')} - ${day}.xlsx`,sheets:[{name:'تفاصيل المستودع',rows:rows1,widths:[32,...ws.map(()=>14),14]},{name:'الغرف',rows:rows2,widths:[10,9,8,8,9,10,10,12,22,16,10,10,11,10,11,16]},{name:'حسب العميل والصنف',rows:rows3,widths:[22,16,18,10,10,10,11,13,13,15]},{name:'حركات اليوم',rows:rows4,widths:[12,10,8,22,16,10,10,10,10]}]}}
 function doExport(ws){try{const r=(tab==='m1'||tab==='m4')?repM14(ws||[tab==='m1'?1:4]):tab==='m3'?repM3():tab==='m10'?repM10():null;if(!r)return;saveBlob(xlsx(r.sheets),r.name)}catch(e){setSt('ما قدرت أجهز الملف: '+(e.message||e),'err')}}
 function doPrint(ws){$('cal').hidden=true;$('pmenu').hidden=true;const both=ws&&ws.length>1;
-  $('prhead').innerHTML=`<b>Mooneh Occupancy · ${both?'مونه 1 + مونه 4':NAMES[tab]||''}</b><span>${ARCH?'أرشيف نهاية يوم '+ds(ARCH):'تاريخ الطباعة '+fmtT(new Date().toISOString())}</span>`;
+  const lg=(document.querySelector('.brandbar img')||{}).src||'';
+  $('prhead').innerHTML=`${lg?`<i class="prlogo" style="-webkit-mask-image:url(${lg});mask-image:url(${lg})"></i>`:''}<b>Mooneh Occupancy · ${both?'مونه 1 + مونه 4':NAMES[tab]||''}</b><span>${ARCH?'أرشيف نهاية يوم '+ds(ARCH):'تاريخ الطباعة '+fmtT(new Date().toISOString())}</span>`;
   if(both){viewWH(1);const a=$('view').innerHTML;viewWH(4);const b=$('view').innerHTML;$('view').innerHTML=a+'<div class="pbreak"></div>'+b;
     const back=()=>{window.removeEventListener('afterprint',back);show(tab)};window.addEventListener('afterprint',back);setTimeout(()=>window.print(),300)}
   else window.print()}
@@ -960,13 +961,24 @@ function mgmtReport(w,d1,d2,cli){const C=MG[w],all=movs(w),one=x=>cli==='*'||x.c
   [...byD.keys()].sort().forEach(d=>{const X=byD.get(d).sort((a,b)=>a.c.localeCompare(b.c,'ar')||(a.room||0)-(b.room||0)||a.op-b.op);X.forEach(x=>rows1.push(C.r1(x)));
     rows1.push(tot(X.filter(x=>!x.op),C.c1,C.qc,'تنزيل يوم '+ds(d)),tot(X.filter(x=>x.op),C.c1,C.qc,'تحميل يوم '+ds(d)),[])});
   if(!L.length)rows1.push(none);else if(byD.size>1)rows1.push(tot(L.filter(x=>!x.op),C.c1,C.qc,'إجمالي التنزيل للفترة'),tot(L.filter(x=>x.op),C.c1,C.qc,'إجمالي التحميل للفترة'));
-  /* sheet 2: cumulative per client over the period */
-  const rows2=[H(C.c2)],by=new Map();L.forEach(x=>{(by.get(x.c)||by.set(x.c,[]).get(x.c)).push(x)});
-  [...by.entries()].sort((a,b)=>a[0].localeCompare(b[0],'ar')).forEach(([c,X])=>{X.sort((a,b)=>a.d.localeCompare(b.d)||(a.room||0)-(b.room||0)||a.op-b.op).forEach(x=>rows2.push(C.r2(x)));
-    rows2.push(tot(X.filter(x=>!x.op),C.c2,C.qc2,'إجمالي تنزيل '+c),tot(X.filter(x=>x.op),C.c2,C.qc2,'إجمالي تحميل '+c),[])});
-  if(!L.length)rows2.push(none);else if(by.size>1)rows2.push(tot(L.filter(x=>!x.op),C.c2,C.qc2,'إجمالي التنزيل الكلي'),tot(L.filter(x=>x.op),C.c2,C.qc2,'إجمالي التحميل الكلي'));
+  /* sheet 2: summary per day + client + category; loading and unloading side by side */
+  const m14=w==='m14',agg=new Map();
+  L.forEach(x=>{const key=x.c+'|'+x.d+'|'+x.k;let g=agg.get(key);if(!g){g={c:x.c,d:x.d,k:x.k,rooms:new Set(),v:[0,0,0,0,0,0]};agg.set(key,g)}
+    if(x.room)g.rooms.add(x.room);const o=x.op?3:0;if(m14){g.v[o]+=x.q19||0;g.v[o+1]+=x.q25||0}g.v[o+2]+=x.q});
+  const rl=s=>[...s].sort((a,b)=>a-b).join('، '),vals=(v,st)=>(m14?v:[v[2],v[5]]).map(n=>st?{v:n,s:st}:n);
+  const hdr=m14?['التاريخ','العميل','الصنف','الغرف','تنزيل 1.9','تنزيل 2.5','تنزيل المجموع','تحميل 1.9','تحميل 2.5','تحميل المجموع']:['التاريخ','العميل','الصنف','تنزيل','تحميل'];
+  const sum=G=>{const v=[0,0,0,0,0,0],rs=new Set();G.forEach(g=>{g.v.forEach((n,i)=>v[i]+=n);g.rooms.forEach(r=>rs.add(r))});return {v,rs}};
+  const trow=(lab,G)=>{const s=sum(G);return [{v:lab,s:'tt'},{v:'',s:'tt'},{v:'',s:'tt'},...(m14?[{v:rl(s.rs),s:'tt'}]:[]),...vals(s.v,'tn')]};
+  const rows2=[H(hdr)],byC=new Map();[...agg.values()].forEach(g=>{(byC.get(g.c)||byC.set(g.c,[]).get(g.c)).push(g)});
+  [...byC.entries()].sort((a,b)=>a[0].localeCompare(b[0],'ar')).forEach(([c,G])=>{
+    G.sort((a,b)=>a.d.localeCompare(b.d)||a.k.localeCompare(b.k,'ar')).forEach(g=>rows2.push([g.d,g.c,g.k,...(m14?[rl(g.rooms)]:[]),...vals(g.v)]));
+    const ks=[...new Set(G.map(g=>g.k))].sort((a,b)=>a.localeCompare(b,'ar'));
+    if(ks.length>1)ks.forEach(k=>rows2.push(trow('إجمالي '+c+' · '+(k||'بدون صنف'),G.filter(g=>g.k===k))));
+    rows2.push(trow('إجمالي '+c,G),[])});
+  if(!L.length)rows2.push(none);else if(byC.size>1)rows2.push(trow('الإجمالي الكلي للفترة',[...agg.values()]));
+  C.w2x=m14?[12,24,16,14,10,10,12,10,10,12]:[12,24,26,12,12];
   return {name:`تقرير الإدارة - ${C.n} - ${d1===d2?d1:d1+' إلى '+d2} - ${cli==='*'?'كل العملاء':cli}.xlsx`.replace(/[\\/:*?"<>|]/g,'-'),
-    sheets:[{name:'تفصيلي يومي',rows:rows1,widths:C.w1},{name:'تراكمي حسب العميل',rows:rows2,widths:C.w2}]}}
+    sheets:[{name:'تفصيلي يومي',rows:rows1,widths:C.w1},{name:'تراكمي حسب العميل',rows:rows2,widths:C.w2x}]}}
 function openMgmt(){const m=$('mgmt'),av=['m14','m3','m10'].filter(w=>movs(w).length||(w==='m14'?D.m14:w==='m3'?D.m3:D.m10io));
   if(!av.length){setSt('لا يوجد بيانات حركات','err');return}
   const day=REFD(),w0=tab==='m3'?'m3':tab==='m10'?'m10':'m14';
