@@ -940,7 +940,7 @@ function pickScope(kind,btn){const m=$('pmenu');if(!(tab==='m1'||tab==='m4')){ki
   m.dataset.kind=kind;m.hidden=!m.hidden}
 
 /* ---------- management reports (daily detail + month-to-date cumulative) ---------- */
-function movs(w){const out=[];
+function movs(w){if(w==='m1'||w==='m4'){const n='مونه '+w.slice(1);return movs('m14').filter(x=>x.wh===n)}const out=[];
   if(w==='m14'&&D.m14){const raw=new Map(D.m14.rooms.map(r=>[r[0],r]));(D.m14.mv||[]).forEach(m=>{const r=raw.get(m[0])||[],b={d:m[1],wh:'مونه '+(r[1]||''),room:m[0],c:r[2]||'—',k:r[3]||''};
     if(m[2]+m[3])out.push({...b,op:0,q19:m[2],q25:m[3],q:m[2]+m[3]});if(m[4]+m[5])out.push({...b,op:1,q19:m[4],q25:m[5],q:m[4]+m[5]})})}
   if(w==='m3'&&D.m3)(D.m3.ops||[]).forEach(o=>out.push({d:o[0],c:o[1],k:o[2],op:o[3],q:o[4],rep:o[5]||'',veh:o[6]||''}));
@@ -953,7 +953,7 @@ const MG={m14:{n:'مونه 1+4',c1:['التاريخ','المستودع','الغ�
   m10:{n:'مونه 10',c1:['التاريخ','العميل','الصنف','العملية','عدد الطبالي'],r1:x=>[x.d,x.c,x.k,OPN(x.op),x.q],
     c2:['التاريخ','العميل','الصنف','العملية','عدد الطبالي'],r2:x=>[x.d,x.c,x.k,OPN(x.op),x.q],w1:[12,22,28,10,12],w2:[12,22,28,10,12],qc:[4],qc2:[4]}};
 const OPN=o=>o?'تحميل':'تنزيل';
-function mgmtReport(w,d1,d2,cli){const C=MG[w],all=movs(w),one=x=>cli==='*'||x.c===cli,per=ds(d1)+' – '+ds(d2);
+function mgmtReport(w,d1,d2,cli){const C=Object.assign({},MG[w==='m1'||w==='m4'?'m14':w],w==='m1'?{n:'مونه 1'}:w==='m4'?{n:'مونه 4'}:{}),all=movs(w),one=x=>cli==='*'||x.c===cli,per=ds(d1)+' – '+ds(d2);
   const tot=(L,cols,first,lab)=>{const r=[{v:lab,s:'tt'}];for(let i=1;i<cols.length;i++)r[i]={v:'',s:'tt'};first.forEach((i,j)=>{const k=first.length===3?['q19','q25','q'][j]:'q';r[i]={v:L.reduce((a,x)=>a+(x[k]||0),0),s:'tn'}});return r};
   const L=all.filter(x=>x.d>=d1&&x.d<=d2&&one(x)),none=['لا يوجد حركات من '+ds(d1)+' لحد '+ds(d2)+(cli==='*'?'':' للعميل '+cli)];
   /* sheet 1: day by day */
@@ -962,7 +962,7 @@ function mgmtReport(w,d1,d2,cli){const C=MG[w],all=movs(w),one=x=>cli==='*'||x.c
     rows1.push(tot(X.filter(x=>!x.op),C.c1,C.qc,'تنزيل يوم '+ds(d)),tot(X.filter(x=>x.op),C.c1,C.qc,'تحميل يوم '+ds(d)),[])});
   if(!L.length)rows1.push(none);else if(byD.size>1)rows1.push(tot(L.filter(x=>!x.op),C.c1,C.qc,'إجمالي التنزيل للفترة'),tot(L.filter(x=>x.op),C.c1,C.qc,'إجمالي التحميل للفترة'));
   /* sheet 2: summary per day + client + category; loading and unloading side by side */
-  const m14=w==='m14',agg=new Map();
+  const m14=w==='m14'||w==='m1'||w==='m4',agg=new Map();
   L.forEach(x=>{const key=x.c+'|'+x.d+'|'+x.k;let g=agg.get(key);if(!g){g={c:x.c,d:x.d,k:x.k,rooms:new Set(),v:[0,0,0,0,0,0]};agg.set(key,g)}
     if(x.room)g.rooms.add(x.room);const o=x.op?3:0;if(m14){g.v[o]+=x.q19||0;g.v[o+1]+=x.q25||0}g.v[o+2]+=x.q});
   const rl=s=>[...s].sort((a,b)=>a-b).join('، '),vals=(v,st)=>(m14?v:[v[2],v[5]]).map(n=>st?{v:n,s:st}:n);
@@ -979,15 +979,15 @@ function mgmtReport(w,d1,d2,cli){const C=MG[w],all=movs(w),one=x=>cli==='*'||x.c
   C.w2x=m14?[12,24,16,14,10,10,12,10,10,12]:[12,24,26,12,12];
   return {name:`تقرير الإدارة - ${C.n} - ${d1===d2?d1:d1+' إلى '+d2} - ${cli==='*'?'كل العملاء':cli}.xlsx`.replace(/[\\/:*?"<>|]/g,'-'),
     sheets:[{name:'تفصيلي يومي',rows:rows1,widths:C.w1},{name:'تراكمي حسب العميل',rows:rows2,widths:C.w2x}]}}
-function openMgmt(){const m=$('mgmt'),av=['m14','m3','m10'].filter(w=>movs(w).length||(w==='m14'?D.m14:w==='m3'?D.m3:D.m10io));
+function openMgmt(){const m=$('mgmt'),NMG={m1:'مونه 1',m4:'مونه 4',m14:'مونه 1 + مونه 4',m3:'مونه 3',m10:'مونه 10'},av=['m1','m4','m14','m3','m10'].filter(w=>(w==='m1'||w==='m4'||w==='m14')?D.m14:w==='m3'?D.m3:D.m10io);
   if(!av.length){setSt('لا يوجد بيانات حركات','err');return}
-  const day=REFD(),w0=tab==='m3'?'m3':tab==='m10'?'m10':'m14';
+  const day=REFD(),w0=tab==='m3'?'m3':tab==='m10'?'m10':tab==='m4'?'m4':'m1';
   m.innerHTML=`<div class="mgbox" role="dialog" aria-label="تقارير الإدارة"><h2>📊 تقارير الإدارة</h2><p class="sub">ملف Excel فيه شيتين للفترة المختارة: <b>تفصيلي يومي</b> (يوم بيوم)، و<b>تراكمي حسب العميل</b>.</p>
-    <label>المستودع<select id="mgW">${av.map(w=>`<option value="${w}"${w===(av.includes(w0)?w0:av[0])?' selected':''}>${MG[w].n}</option>`).join('')}</select></label>
+    <label>المستودع<select id="mgW">${av.map(w=>`<option value="${w}"${w===(av.includes(w0)?w0:av[0])?' selected':''}>${NMG[w]}</option>`).join('')}</select></label>
     <div class="mgrow"><label>من<input type="date" id="mgF" value="${day.slice(0,8)}01" max="${day}"></label><label>إلى<input type="date" id="mgD" value="${day}" max="${day}"></label></div>
     <label>العميل<select id="mgC"></select></label>
     <div class="mgact"><button type="button" class="btn" id="mgGo">⬇️ تنزيل التقرير</button><button type="button" class="tool2" id="mgX">إلغاء</button></div><p class="st" id="mgSt"></p></div>`;
-  const fillC=()=>{const w=$('mgW').value,cs=[...new Set(movs(w).map(x=>x.c).filter(c=>c&&c!=='—'))].sort((a,b)=>a.localeCompare(b,'ar'));
+  const fillC=()=>{const w=$('mgW').value,rc=(w==='m1'||w==='m4'||w==='m14')&&D.m14?D.m14.rooms.filter(r=>r[2]&&(w==='m14'||r[1]===+w.slice(1))).map(r=>r[2]):[],cs=[...new Set([...rc,...movs(w).map(x=>x.c)].filter(c=>c&&c!=='—'))].sort((a,b)=>a.localeCompare(b,'ar'));
     $('mgC').innerHTML=`<option value="*">الكل</option>`+cs.map(c=>`<option>${esc(c)}</option>`).join('')};
   fillC();$('mgW').addEventListener('change',fillC);
   $('mgX').addEventListener('click',()=>{m.hidden=true});
